@@ -2,7 +2,7 @@
 
 - **Developer**: Matthew OBrien
 - **Email**: mobrien@broadinstitute.org
-- **Project URL**: https://test.pypi.org/project/bibtutils/
+- **Project URL**: https://pypi.org/project/bibtutils/
 - **Project Repo**: https://github.com/broadinstitute/bibtutils
 
 ## Installing
@@ -14,7 +14,7 @@ $ pip install --upgrade bibtutils
 
 ## Usage
 
-- See documentation here: https://readthedocs.org/projects/bibtutils/
+- See documentation here: https://bibtutils.readthedocs.io/en/latest/
 
 ## Contributing
 
