@@ -4,8 +4,6 @@
 - **Email**: mobrien@broadinstitute.org
 - **Project URL**: https://test.pypi.org/project/bibtutils/
 - **Project Repo**: https://github.com/broadinstitute/bibtutils
-- **TEST Project URL**: https://test.pypi.org/project/bibtutils/
-- **TEST Project Repo**: https://github.com/ob775/bibtutils-test
 
 ## Installing
 
@@ -13,11 +11,6 @@
 $ pip install --upgrade bibtutils
 ```
 
-## Installing from testpypi
-
-```bash
-$ pip install --upgrade -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple bibtutils
-```
 
 ## Usage
 
