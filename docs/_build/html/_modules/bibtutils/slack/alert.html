@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bibtutils.slack.alert &#8212; bibtutils  documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bibtutils.slack.alert</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">bibtutils.slack.alert</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">Enables sending alerts (crashes and/or errors) to Slack.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">_get_cfname</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;Helper function to get the current cloud function name. </span>
+<span class="sd">    References environment variables set by GCP (`K_SERVICE` for Python 3.8+, </span>
+<span class="sd">    or `FUNCTION_NAME` for Python 3.7). If neither value is set, </span>
+<span class="sd">    returns ``&#39;UNKNOWN&#39;``.</span>
+
+<span class="sd">    :rtype: `str`</span>
+<span class="sd">    :returns: the cloud function name.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cfname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;K_SERVICE&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="c1"># If not, check for older name (Python 3.7)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfname</span><span class="p">:</span>
+        <span class="n">cfname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FUNCTION_NAME&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;UNKNOWN&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cfname</span>
+
+<div class="viewcode-block" id="send_cf_fail_alert"><a class="viewcode-back" href="../../../modules/alert.html#bibtutils.slack.alert.send_cf_fail_alert">[docs]</a><span class="k">def</span> <span class="nf">send_cf_fail_alert</span><span class="p">(</span><span class="n">currenttime</span><span class="p">,</span> <span class="n">eventtime</span><span class="p">,</span> <span class="n">webhook</span><span class="p">,</span> <span class="n">proj_envar</span><span class="o">=</span><span class="s1">&#39;_GOOGLE_PROJECT&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Sends a cloud function runtime failure alert to Slack. </span>
+<span class="sd">    Automatically called by the :func:`~bibtutils.gcp.pubsub.process_trigger` </span>
+<span class="sd">    method if function retry threshold is exceeded. Will include an </span>
+<span class="sd">    appropriately-timestamped link to the cloud function&#39;s </span>
+<span class="sd">    logs in the Slack message.</span>
+
+<span class="sd">    :type currenttime: :class:`datetime.datetime`</span>
+<span class="sd">    :param currenttime: a datetime object representing the current time.</span>
+
+<span class="sd">    :type eventtime: :class:`datetime.datetime`</span>
+<span class="sd">    :param eventtime: a datetime object representing the </span>
+<span class="sd">        original triggering time.</span>
+
+<span class="sd">    :type webhook: `str`</span>
+<span class="sd">    :param webhook: a slack webhook in the standard format: </span>
+<span class="sd">        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``</span>
+<span class="sd">    </span>
+<span class="sd">    :type proj_envar: `str`</span>
+<span class="sd">    :param proj_envar: (Optional) the environment variable to </span>
+<span class="sd">        reference for current GCP project. Defaults to ``&#39;_GOOGLE_PROJECT&#39;``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ctimestamp</span> <span class="o">=</span> <span class="n">currenttime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">T%H%M%SZ&#39;</span><span class="p">)</span>
+    <span class="n">etimestamp</span> <span class="o">=</span> <span class="n">eventtime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">T%H%M%SZ&#39;</span><span class="p">)</span>
+    <span class="n">cfname</span> <span class="o">=</span> <span class="n">_get_cfname</span><span class="p">()</span>
+    <span class="n">hyperlink</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;https://console.cloud.google.com/logs/query;query=&#39;</span>
+        <span class="s1">&#39;resource.type%3D</span><span class="si">%22c</span><span class="s1">loud_function</span><span class="si">%22%</span><span class="s1">0A&#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;resource.labels.function_name%3D%22</span><span class="si">{</span><span class="n">cfname</span><span class="si">}</span><span class="s1">%22;&#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;timeRange=</span><span class="si">{</span><span class="n">etimestamp</span><span class="si">}</span><span class="s1">%2F</span><span class="si">{</span><span class="n">ctimestamp</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;?project=</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_GOOGLE_PROJECT&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;blocks&#39;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;mrkdwn&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;:exclamation: *Cloud Function Failed* :exclamation: @here&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}],</span>
+        <span class="s1">&#39;attachments&#39;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ff0000&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;blocks&#39;</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;mrkdwn&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;`</span><span class="si">{</span><span class="n">cfname</span><span class="si">}</span><span class="s1">` exceeded its retry threshold in &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;`</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_GOOGLE_PROJECT&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">`</span><span class="se">\n</span><span class="s1">&#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;See logs here: &lt;</span><span class="si">{</span><span class="n">hyperlink</span><span class="si">}</span><span class="s1">|Logs Explorer&gt;&#39;</span>
+                <span class="p">}</span>
+            <span class="p">}]</span>
+        <span class="p">}]</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">webhook</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="send_cf_error"><a class="viewcode-back" href="../../../modules/alert.html#bibtutils.slack.alert.send_cf_error">[docs]</a><span class="k">def</span> <span class="nf">send_cf_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">webhook</span><span class="p">,</span> <span class="n">proj_envar</span><span class="o">=</span><span class="s1">&#39;_GOOGLE_PROJECT&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Sends an error message to Slack. Not necessarily indicative of a crash.</span>
+
+<span class="sd">    :type message: `str`</span>
+<span class="sd">    :param message: a description of the error, included as an </span>
+<span class="sd">        attachment in the Slack message.</span>
+
+<span class="sd">    :type webhook: `str`</span>
+<span class="sd">    :param webhook: a slack webhook in the standard format: </span>
+<span class="sd">        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``</span>
+<span class="sd">    </span>
+<span class="sd">    :type proj_envar: `str`</span>
+<span class="sd">    :param proj_envar: (Optional) the environment variable to </span>
+<span class="sd">        reference for current GCP project. Defaults to ``&#39;_GOOGLE_PROJECT&#39;``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cfname</span> <span class="o">=</span> <span class="n">_get_cfname</span><span class="p">()</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;blocks&#39;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;mrkdwn&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;:exclamation: *Cloud Function Encountered Error* :exclamation: @here</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">- *Project*: `</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">proj_envar</span><span class="p">)</span><span class="si">}</span><span class="s1">`</span><span class="se">\n\t</span><span class="s1">- *Function*: `</span><span class="si">{</span><span class="n">cfname</span><span class="si">}</span><span class="s1">`&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}],</span>
+        <span class="s1">&#39;attachments&#39;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ff0000&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;blocks&#39;</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;mrkdwn&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span>
+                <span class="p">}</span>
+            <span class="p">}]</span>
+        <span class="p">}]</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">webhook</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">bibtutils</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gcp.html">Google Cloud Platform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../slack.html">Slack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/sanitycheck.html">Sanity Check</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributor’s Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthew OBrien.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

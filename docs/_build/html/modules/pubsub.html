@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PubSub &#8212; bibtutils  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Secret Manager" href="secrets.html" />
+    <link rel="prev" title="BigQuery" href="bigquery.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+    <link rel="apple-touch-icon" href="../_static/./bibt.ico" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bibtutils.gcp.pubsub">
+<span id="pubsub"></span><h1>PubSub<a class="headerlink" href="#module-bibtutils.gcp.pubsub" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bibtutils-gcp-pubsub">
+<h2>bibtutils.gcp.pubsub<a class="headerlink" href="#bibtutils-gcp-pubsub" title="Permalink to this headline">¶</a></h2>
+<p>Functionality making use of GCP’s PubSubs.</p>
+<dl class="py function">
+<dt id="bibtutils.gcp.pubsub.process_trigger">
+<code class="sig-prename descclassname"><span class="pre">bibtutils.gcp.pubsub.</span></code><code class="sig-name descname"><span class="pre">process_trigger</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_secs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_alert_webhook_secret_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FAIL_ALERT_WEBHOOK_SECRET_URI'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bibtutils/gcp/pubsub.html#process_trigger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bibtutils.gcp.pubsub.process_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check timestamp of triggering event; catches infinite retry 
+loops on ‘retry on fail’ cloud functions. If the timeout has been exceeded, 
+will attempt to alert via Slack after fetching a webhook in Secret Manager 
+whose name should be provided in the environment variable specified in the 
+function call. <strong>It expects a full secret URI, not just a name!</strong> If the 
+triggering pubsub has a payload, will decode it as utf-8 and return it. 
+Otherwise, will return None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">google.cloud.functions.Context</span></code>) – the triggering pubsub’s context.</p></li>
+<li><p><strong>timeout_secs</strong> (<em>int</em>) – (Optional) the number of seconds to consider as 
+the timeout threshold from the original trigger time. Defaults to 1800.</p></li>
+<li><p><strong>fail_alert_webhook_secret_uri</strong> (<em>str</em>) – (Optional) the name of the 
+environment variable from which to read the secret URI. Defaults 
+to <code class="docutils literal notranslate"><span class="pre">'FAIL_ALERT_WEBHOOK_SECRET_URI'</span></code>. secret uri format in the 
+envar: <code class="docutils literal notranslate"><span class="pre">projects/{host_project}/secrets/{secret_name}/versions/latest</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><cite>str</cite> OR <cite>None</cite></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the pubsub payload, if present.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bibtutils.gcp.pubsub.retrigger_self">
+<code class="sig-prename descclassname"><span class="pre">bibtutils.gcp.pubsub.</span></code><code class="sig-name descname"><span class="pre">retrigger_self</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proj_envar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_GOOGLE_PROJECT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic_envar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_TRIGGER_TOPIC'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bibtutils/gcp/pubsub.html#retrigger_self"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bibtutils.gcp.pubsub.retrigger_self" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches the next iteration of the function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payload</strong> (<cite>dict</cite>) – the pubsub payload.</p></li>
+<li><p><strong>proj_envar</strong> (<cite>str</cite>) – (Optional) the environment variable to 
+reference for current GCP project. Defaults to <code class="docutils literal notranslate"><span class="pre">'_GOOGLE_PROJECT'</span></code>.</p></li>
+<li><p><strong>topic_envar</strong> (<cite>str</cite>) – (Optional) the environment variable to 
+reference for the triggering pubsub topic. Defaults to <code class="docutils literal notranslate"><span class="pre">'_TRIGGER_TOPIC'</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bibtutils.gcp.pubsub.send_pubsub">
+<code class="sig-prename descclassname"><span class="pre">bibtutils.gcp.pubsub.</span></code><code class="sig-name descname"><span class="pre">send_pubsub</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bibtutils/gcp/pubsub.html#send_pubsub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bibtutils.gcp.pubsub.send_pubsub" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publishes a pubsub message to the specified topic. Executing account 
+must have pubsub publisher permissions on the topic or in the project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic_uri</strong> (<cite>str</cite>) – the topic on which to publish. 
+topic uri format: <code class="docutils literal notranslate"><span class="pre">projects/{project_name}/topics/{topic_name}</span></code></p></li>
+<li><p><strong>payload</strong> (<cite>dict</cite>) – the pubsub payload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/./bibt.ico" alt="Logo"/>
+    
+    <h1 class="logo logo-name">bibtutils</h1>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../gcp.html">Google Cloud Platform</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bigquery.html">BigQuery</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PubSub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secrets.html">Secret Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html">Cloud Storage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../slack.html">Slack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sanitycheck.html">Sanity Check</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributor’s Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../gcp.html">Google Cloud Platform</a><ul>
+      <li>Previous: <a href="bigquery.html" title="previous chapter">BigQuery</a></li>
+      <li>Next: <a href="secrets.html" title="next chapter">Secret Manager</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthew OBrien.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/modules/pubsub.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

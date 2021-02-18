@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bibtutils.gcp.storage &#8212; bibtutils  documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bibtutils.gcp.storage</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">bibtutils.gcp.storage</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">Functionality making use of GCP&#39;s Cloud Storage.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="write_gcs"><a class="viewcode-back" href="../../../modules/storage.html#bibtutils.gcp.storage.write_gcs">[docs]</a><span class="k">def</span> <span class="nf">write_gcs</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">blob_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Writes a String to GCS storage under a given blob name to the given bucket.</span>
+<span class="sd">    The executing account must have (at least) write permissions to the bucket.</span>
+
+<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :param bucket_name: the name of the bucket to which to write.</span>
+
+<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :param blob_name: the name of the blob to write.</span>
+
+<span class="sd">    :type data: `str`</span>
+<span class="sd">    :param data: the data to be written.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">blob_name</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Writing to GCS: gs://</span><span class="si">{</span><span class="n">bucket_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_string</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Upload complete.&#39;</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="read_gcs"><a class="viewcode-back" href="../../../modules/storage.html#bibtutils.gcp.storage.read_gcs">[docs]</a><span class="k">def</span> <span class="nf">read_gcs</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">blob_name</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reads the contents of a blob from GCS. Service account must </span>
+<span class="sd">    have (at least) read permissions on the bucket/blob.</span>
+
+<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :param bucket_name: the bucket hosting the specified blob.</span>
+
+<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :param blob_name: the blob to read from GCS.</span>
+
+<span class="sd">    :type decode: `bool`</span>
+<span class="sd">    :param decode: (Optional) whether or not to decode the blob </span>
+<span class="sd">        contents into utf-8. Defaults to ``True``.</span>
+
+<span class="sd">    :rtype: `str`</span>
+<span class="sd">    :returns: blob contents, decoded to utf-8.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Getting gs://</span><span class="si">{</span><span class="n">bucket_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_blob</span><span class="p">(</span><span class="n">blob_name</span><span class="p">)</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">download_as_bytes</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">decode</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">contents</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">contents</span></div>
+
+
+<div class="viewcode-block" id="write_gcs_nldjson"><a class="viewcode-back" href="../../../modules/storage.html#bibtutils.gcp.storage.write_gcs_nldjson">[docs]</a><span class="k">def</span> <span class="nf">write_gcs_nldjson</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">blob_name</span><span class="p">,</span> <span class="n">json_data</span><span class="p">,</span> <span class="n">add_date</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Writes a dict to GCS storage under a given blob name to the given bucket.</span>
+<span class="sd">    The executing account must have (at least) write permissions to the bucket.</span>
+
+<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :param bucket_name: the name of the bucket to which to write.</span>
+
+<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :param blob_name: the name of the blob to write.</span>
+
+<span class="sd">    :type json_data: `dict`</span>
+<span class="sd">    :param json_data: the data to be written. will be converted to </span>
+<span class="sd">        JSON NLD before uploading for compatibility with BQ.</span>
+
+<span class="sd">    :type add_date: `bool`</span>
+<span class="sd">    :param add_date: (Optional) whether or not to add upload date to </span>
+<span class="sd">        the data before upload. Defaults to ``False``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nld_json</span> <span class="o">=</span> <span class="n">_generate_json_nld</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
+    <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">blob_name</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Dumping to storage </span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">)</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_string</span><span class="p">(</span><span class="n">nld_json</span><span class="p">,</span> <span class="n">add_date</span><span class="o">=</span><span class="n">add_date</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="k">def</span> <span class="nf">_generate_json_nld</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">add_date</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Takes a dict object and returns a string in JSON NLD format. </span>
+<span class="sd">    Compatible with uploading to BQ.</span>
+
+<span class="sd">    :type json_data: `dict`</span>
+<span class="sd">    :param json_data: the data to be converted to JSON NLD.</span>
+
+<span class="sd">    :type add_date: `bool`</span>
+<span class="sd">    :param add_date: whether or not to add upload date to the </span>
+<span class="sd">        data before upload.</span>
+
+<span class="sd">    :rtype: `str`</span>
+<span class="sd">    :returns: formatted JSON NLD.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Generating JSON NLD...&#39;</span><span class="p">)</span>
+    <span class="n">json_nld</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">json_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">add_date</span><span class="p">:</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;upload_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="n">json_nld</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Generated.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json_nld</span>
+
+
+<div class="viewcode-block" id="read_gcs_nldjson"><a class="viewcode-back" href="../../../modules/storage.html#bibtutils.gcp.storage.read_gcs_nldjson">[docs]</a><span class="k">def</span> <span class="nf">read_gcs_nldjson</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">blob_name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reads a blob in JSON NLD format from GCS and returns it as a dict.</span>
+
+<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :param bucket_name: the bucket hosting the specified blob.</span>
+
+<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :param blob_name: the blob to read from GCS.</span>
+
+<span class="sd">    :rtype: `dict`</span>
+<span class="sd">    :returns: the data from the blob, converted into a dict object.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Getting gs://</span><span class="si">{</span><span class="n">bucket_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_blob</span><span class="p">(</span><span class="n">blob_name</span><span class="p">)</span>
+    <span class="n">json_nld</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">download_as_string</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Converting from JSON NLD to JSON...&#39;</span><span class="p">)</span>
+    <span class="n">json_list</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="n">json_nld</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">json_list</span> <span class="o">=</span> <span class="n">json_list</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_list</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">bibtutils</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gcp.html">Google Cloud Platform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../slack.html">Slack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/sanitycheck.html">Sanity Check</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributor’s Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthew OBrien.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

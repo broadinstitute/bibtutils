@@ -1,3 +1,11 @@
+'''
+bibtutils.slack.alert
+~~~~~~~~~~~~~~~~~~~~~
+
+Enables sending alerts (crashes and/or errors) to Slack.
+
+'''
+
 import os
 import json
 import logging
@@ -6,13 +14,14 @@ import datetime
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-def _get_cfname() -> str:
-    '''
-    Helper function to get the current cloud function name. References environment variables set by GCP (`K_SERVICE` for Python 3.8+, or `FUNCTION_NAME` for Python 3.7).
-    If neither value is set, returns 'UNKNOWN'.
+def _get_cfname():
+    '''Helper function to get the current cloud function name. 
+    References environment variables set by GCP (`K_SERVICE` for Python 3.8+, 
+    or `FUNCTION_NAME` for Python 3.7). If neither value is set, 
+    returns ``'UNKNOWN'``.
 
-    Returns:
-        str: the cloud function name.
+    :rtype: `str`
+    :returns: the cloud function name.
     '''
     cfname = os.environ.get('K_SERVICE', default=None)
     # If not, check for older name (Python 3.7)
@@ -20,16 +29,27 @@ def _get_cfname() -> str:
         cfname = os.environ.get('FUNCTION_NAME', default='UNKNOWN')
     return cfname
 
-def send_cf_fail_alert(currenttime:datetime.datetime, eventtime:datetime.datetime, webhook:str, proj_envar='_GOOGLE_PROJECT') -> None:
-    '''
-    Sends a cloud function runtime failure alert to Slack. Automatically called by the `bibtutils.gcp.pubsub.process_trigger()` method if function retry threshold is exceeded.
-    Will include an appropriately-timestamped link to the cloud function's logs in the Slack message.
+def send_cf_fail_alert(currenttime, eventtime, webhook, proj_envar='_GOOGLE_PROJECT'):
+    '''Sends a cloud function runtime failure alert to Slack. 
+    Automatically called by the :func:`~bibtutils.gcp.pubsub.process_trigger` 
+    method if function retry threshold is exceeded. Will include an 
+    appropriately-timestamped link to the cloud function's 
+    logs in the Slack message.
 
-    Args:
-        currenttime (datetime.datetime): a datetime object representing the current time.
-        eventtime (datetime.datetime): a datetime object representing the original triggering time.
-        webhook (str): a slack webhook in the standard format: `https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}`
-        proj_envar (str, optional): the environment variable to reference for current GCP project. Defaults to '_GOOGLE_PROJECT'.
+    :type currenttime: :class:`datetime.datetime`
+    :param currenttime: a datetime object representing the current time.
+
+    :type eventtime: :class:`datetime.datetime`
+    :param eventtime: a datetime object representing the 
+        original triggering time.
+
+    :type webhook: `str`
+    :param webhook: a slack webhook in the standard format: 
+        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``
+    
+    :type proj_envar: `str`
+    :param proj_envar: (Optional) the environment variable to 
+        reference for current GCP project. Defaults to ``'_GOOGLE_PROJECT'``.
     '''
     ctimestamp = currenttime.strftime('%Y%m%dT%H%M%SZ')
     etimestamp = eventtime.strftime('%Y%m%dT%H%M%SZ')
@@ -55,7 +75,8 @@ def send_cf_fail_alert(currenttime:datetime.datetime, eventtime:datetime.datetim
                 'type': 'section',
                 'text': {
                     'type': 'mrkdwn',
-                    'text': f'`{cfname}` exceeded its retry threshold in `{os.environ.get("_GOOGLE_PROJECT")}`\n'
+                    'text': f'`{cfname}` exceeded its retry threshold in '
+                            f'`{os.environ.get("_GOOGLE_PROJECT")}`\n'
                             f'See logs here: <{hyperlink}|Logs Explorer>'
                 }
             }]
@@ -65,14 +86,20 @@ def send_cf_fail_alert(currenttime:datetime.datetime, eventtime:datetime.datetim
     r.raise_for_status()
     return
 
-def send_cf_error(message:str, webhook:str, proj_envar='_GOOGLE_PROJECT') -> None:
-    '''
-    Sends an error message to Slack. Not necessarily indicative of a crash.
+def send_cf_error(message, webhook, proj_envar='_GOOGLE_PROJECT'):
+    '''Sends an error message to Slack. Not necessarily indicative of a crash.
 
-    Args:
-        message (str): a description of the error, included as an attachment in the Slack message.
-        webhook (str): a slack webhook in the standard format: `https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}`
-        proj_envar (str, optional): the environment variable to reference for current GCP project. Defaults to '_GOOGLE_PROJECT'.
+    :type message: `str`
+    :param message: a description of the error, included as an 
+        attachment in the Slack message.
+
+    :type webhook: `str`
+    :param webhook: a slack webhook in the standard format: 
+        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``
+    
+    :type proj_envar: `str`
+    :param proj_envar: (Optional) the environment variable to 
+        reference for current GCP project. Defaults to ``'_GOOGLE_PROJECT'``.
     '''
     cfname = _get_cfname()
     msg = {
