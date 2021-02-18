@@ -21,4 +21,5 @@ google-resumable-media==1.2.0
 googleapis-common-protos==1.52.0
 grpc-google-iam-v1==0.12.3
 grpcio==1.35.0
+python-dateutil==2.8.*
 requests==2.25.1
