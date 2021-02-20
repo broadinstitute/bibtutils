@@ -81,7 +81,7 @@ def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False):
     :param add_date: (Optional) whether or not to add upload date to 
         the data before upload. Defaults to ``False``.
     '''
-    nld_json = _generate_json_nld(json_data)
+    nld_json = _generate_json_nld(json_data, add_date)
     storage_client = storage.Client()
     blob = storage_client.get_bucket(bucket_name, timeout=3).blob(blob_name)
     logging.info(f'Dumping to storage {blob_name}...')
