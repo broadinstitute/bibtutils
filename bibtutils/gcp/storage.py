@@ -85,7 +85,7 @@ def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False):
     storage_client = storage.Client()
     blob = storage_client.get_bucket(bucket_name, timeout=3).blob(blob_name)
     logging.info(f'Dumping to storage {blob_name}...')
-    blob.upload_from_string(nld_json, add_date=add_date)
+    blob.upload_from_string(nld_json)
     return
 
 
