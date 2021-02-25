@@ -7,6 +7,7 @@ Functionality making use of GCP's Cloud Storage.
 '''
 
 from google.cloud import storage
+import datetime
 import logging
 import json
 
