@@ -8,6 +8,7 @@
     <title>bibtutils.slack.alert &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
@@ -16,6 +17,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+    <link rel="apple-touch-icon" href="../../../_static/./bibt.ico" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -49,11 +52,11 @@
 
 <span class="k">def</span> <span class="nf">_get_cfname</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;Helper function to get the current cloud function name. </span>
-<span class="sd">    References environment variables set by GCP (`K_SERVICE` for Python 3.8+, </span>
-<span class="sd">    or `FUNCTION_NAME` for Python 3.7). If neither value is set, </span>
+<span class="sd">    References environment variables set by GCP (``&#39;K_SERVICE&#39;`` for Python 3.8+, </span>
+<span class="sd">    or ``&#39;FUNCTION_NAME&#39;`` for Python 3.7). If neither value is set, </span>
 <span class="sd">    returns ``&#39;UNKNOWN&#39;``.</span>
 
-<span class="sd">    :rtype: `str`</span>
+<span class="sd">    :rtype: :py:class:`str`</span>
 <span class="sd">    :returns: the cloud function name.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">cfname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;K_SERVICE&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -76,11 +79,11 @@
 <span class="sd">    :param eventtime: a datetime object representing the </span>
 <span class="sd">        original triggering time.</span>
 
-<span class="sd">    :type webhook: `str`</span>
+<span class="sd">    :type webhook: :py:class:`str`</span>
 <span class="sd">    :param webhook: a slack webhook in the standard format: </span>
-<span class="sd">        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``</span>
+<span class="sd">        ``&#39;https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}&#39;``</span>
 <span class="sd">    </span>
-<span class="sd">    :type proj_envar: `str`</span>
+<span class="sd">    :type proj_envar: :py:class:`str`</span>
 <span class="sd">    :param proj_envar: (Optional) the environment variable to </span>
 <span class="sd">        reference for current GCP project. Defaults to ``&#39;_GOOGLE_PROJECT&#39;``.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -122,15 +125,15 @@
 <div class="viewcode-block" id="send_cf_error"><a class="viewcode-back" href="../../../modules/alert.html#bibtutils.slack.alert.send_cf_error">[docs]</a><span class="k">def</span> <span class="nf">send_cf_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">webhook</span><span class="p">,</span> <span class="n">proj_envar</span><span class="o">=</span><span class="s1">&#39;_GOOGLE_PROJECT&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Sends an error message to Slack. Not necessarily indicative of a crash.</span>
 
-<span class="sd">    :type message: `str`</span>
+<span class="sd">    :type message: :py:class:`str`</span>
 <span class="sd">    :param message: a description of the error, included as an </span>
 <span class="sd">        attachment in the Slack message.</span>
 
-<span class="sd">    :type webhook: `str`</span>
+<span class="sd">    :type webhook: :py:class:`str`</span>
 <span class="sd">    :param webhook: a slack webhook in the standard format: </span>
-<span class="sd">        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``</span>
+<span class="sd">        ``&#39;https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}&#39;``</span>
 <span class="sd">    </span>
-<span class="sd">    :type proj_envar: `str`</span>
+<span class="sd">    :type proj_envar: :py:class:`str`</span>
 <span class="sd">    :param proj_envar: (Optional) the environment variable to </span>
 <span class="sd">        reference for current GCP project. Defaults to ``&#39;_GOOGLE_PROJECT&#39;``.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -166,7 +169,14 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">bibtutils</a></h1>
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/./bibt.ico" alt="Logo"/>
+    
+    <h1 class="logo logo-name">bibtutils</h1>
+    
+  </a>
+</p>
 
 
 

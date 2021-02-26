@@ -4,6 +4,8 @@ bibtutils.gcp.pubsub
 
 Functionality making use of GCP's PubSubs.
 
+See the official PubSub Python Client documentation here: `link <https://googleapis.dev/python/pubsub/latest/index.html>`_.
+
 '''
 
 from bibtutils.slack.alert import send_cf_fail_alert
@@ -21,14 +23,14 @@ def retrigger_self(payload, proj_envar='_GOOGLE_PROJECT', topic_envar='_TRIGGER_
     '''
     Dispatches the next iteration of the function.
 
-    :type payload: `dict`
+    :type payload: :py:class:`dict`
     :param payload: the pubsub payload.
 
-    :type proj_envar: `str`
+    :type proj_envar: :py:class:`str`
     :param proj_envar: (Optional) the environment variable to 
         reference for current GCP project. Defaults to ``'_GOOGLE_PROJECT'``.
     
-    :type topic_envar: `str`
+    :type topic_envar: :py:class:`str`
     :param topic_envar: (Optional) the environment variable to 
         reference for the triggering pubsub topic. Defaults to ``'_TRIGGER_TOPIC'``.
     '''
@@ -48,11 +50,11 @@ def send_pubsub(topic_uri, payload):
     Publishes a pubsub message to the specified topic. Executing account 
     must have pubsub publisher permissions on the topic or in the project.
 
-    :type topic_uri: `str`
+    :type topic_uri: :py:class:`str`
     :param topic_uri: the topic on which to publish. 
-        topic uri format: ``projects/{project_name}/topics/{topic_name}``
+        topic uri format: ``'projects/{project_name}/topics/{topic_name}'``
 
-    :type payload: `dict`
+    :type payload: :py:class:`dict`
     :param payload: the pubsub payload.
     '''
     publisher = pubsub_v1.PublisherClient()
@@ -72,22 +74,22 @@ def process_trigger(context, timeout_secs=1800,
     whose name should be provided in the environment variable specified in the 
     function call. **It expects a full secret URI, not just a name!** If the 
     triggering pubsub has a payload, will decode it as utf-8 and return it. 
-    Otherwise, will return None.
+    Otherwise, will return ``None``.
 
     :type context: :class:`google.cloud.functions.Context`
     :param context: the triggering pubsub's context.
     
-    :type timeout_secs: int
+    :type timeout_secs: :py:class:`int`
     :param timeout_secs: (Optional) the number of seconds to consider as 
         the timeout threshold from the original trigger time. Defaults to 1800.
     
-    :type fail_alert_webhook_secret_uri: str
+    :type fail_alert_webhook_secret_uri: :py:class:`str`
     :param fail_alert_webhook_secret_uri: (Optional) the name of the 
         environment variable from which to read the secret URI. Defaults 
         to ``'FAIL_ALERT_WEBHOOK_SECRET_URI'``. secret uri format in the 
-        envar: ``projects/{host_project}/secrets/{secret_name}/versions/latest``.
+        envar: ``'projects/{host_project}/secrets/{secret_name}/versions/latest'``.
 
-    :rtype: `str` OR `None`
+    :rtype: :py:class:`str` OR :py:class:`None`
     :returns: the pubsub payload, if present.
     '''
     utctime = datetime.now(timezone.utc)

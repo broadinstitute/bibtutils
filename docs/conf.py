@@ -14,7 +14,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('.'))
-print(sys.path)
 
 
 # -- Project information -----------------------------------------------------
@@ -31,8 +30,21 @@ author = 'Matthew OBrien'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.coverage',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
 ]
+
+autosummary_generate = True
+
+autodoc_mock_imports = [
+    'google',
+    'dateutil',
+    'requests'
+]
+
+coverage_show_missing_items = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -63,8 +75,14 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
+html_css_files = ['custom.css']
+# html_style = 'custom.css'
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
 add_module_names = True
+
+
+intersphinx_mapping = {
+    "python": ("https://python.readthedocs.org/en/latest/", None)
+}

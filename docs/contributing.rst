@@ -24,6 +24,11 @@ Updating and publishing a new package
 
 .. code:: bash
 
+   # test documentation build
+   $ cd docs && make html
+   # see any undocumented objects
+   $ make html -b coverage
+
    $ git add .
    $ git commit -m "msg"
    $ bumpversion major|minor|patch # with bump2version, bumpversion is an alias

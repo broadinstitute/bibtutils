@@ -16,11 +16,11 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 def _get_cfname():
     '''Helper function to get the current cloud function name. 
-    References environment variables set by GCP (`K_SERVICE` for Python 3.8+, 
-    or `FUNCTION_NAME` for Python 3.7). If neither value is set, 
+    References environment variables set by GCP (``'K_SERVICE'`` for Python 3.8+, 
+    or ``'FUNCTION_NAME'`` for Python 3.7). If neither value is set, 
     returns ``'UNKNOWN'``.
 
-    :rtype: `str`
+    :rtype: :py:class:`str`
     :returns: the cloud function name.
     '''
     cfname = os.environ.get('K_SERVICE', default=None)
@@ -43,11 +43,11 @@ def send_cf_fail_alert(currenttime, eventtime, webhook, proj_envar='_GOOGLE_PROJ
     :param eventtime: a datetime object representing the 
         original triggering time.
 
-    :type webhook: `str`
+    :type webhook: :py:class:`str`
     :param webhook: a slack webhook in the standard format: 
-        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``
+        ``'https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}'``
     
-    :type proj_envar: `str`
+    :type proj_envar: :py:class:`str`
     :param proj_envar: (Optional) the environment variable to 
         reference for current GCP project. Defaults to ``'_GOOGLE_PROJECT'``.
     '''
@@ -89,15 +89,15 @@ def send_cf_fail_alert(currenttime, eventtime, webhook, proj_envar='_GOOGLE_PROJ
 def send_cf_error(message, webhook, proj_envar='_GOOGLE_PROJECT'):
     '''Sends an error message to Slack. Not necessarily indicative of a crash.
 
-    :type message: `str`
+    :type message: :py:class:`str`
     :param message: a description of the error, included as an 
         attachment in the Slack message.
 
-    :type webhook: `str`
+    :type webhook: :py:class:`str`
     :param webhook: a slack webhook in the standard format: 
-        ``https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}``
+        ``'https://hooks.slack.com/services/{app_id}/{channel_id}/{hash}'``
     
-    :type proj_envar: `str`
+    :type proj_envar: :py:class:`str`
     :param proj_envar: (Optional) the environment variable to 
         reference for current GCP project. Defaults to ``'_GOOGLE_PROJECT'``.
     '''

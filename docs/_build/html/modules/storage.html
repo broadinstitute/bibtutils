@@ -8,6 +8,7 @@
     <title>Cloud Storage &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -39,6 +40,7 @@
 <div class="section" id="bibtutils-gcp-storage">
 <h2>bibtutils.gcp.storage<a class="headerlink" href="#bibtutils-gcp-storage" title="Permalink to this headline">¶</a></h2>
 <p>Functionality making use of GCP’s Cloud Storage.</p>
+<p>See the official Cloud Storage Python Client documentation here: <a class="reference external" href="https://googleapis.dev/python/storage/latest/index.html">link</a>.</p>
 <dl class="py function">
 <dt id="bibtutils.gcp.storage.read_gcs">
 <code class="sig-prename descclassname"><span class="pre">bibtutils.gcp.storage.</span></code><code class="sig-name descname"><span class="pre">read_gcs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bibtutils/gcp/storage.html#read_gcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bibtutils.gcp.storage.read_gcs" title="Permalink to this definition">¶</a></dt>
@@ -47,14 +49,14 @@ have (at least) read permissions on the bucket/blob.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bucket_name</strong> (<cite>str</cite>) – the bucket hosting the specified blob.</p></li>
-<li><p><strong>blob_name</strong> (<cite>str</cite>) – the blob to read from GCS.</p></li>
-<li><p><strong>decode</strong> (<cite>bool</cite>) – (Optional) whether or not to decode the blob 
+<li><p><strong>bucket_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the bucket hosting the specified blob.</p></li>
+<li><p><strong>blob_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the blob to read from GCS.</p></li>
+<li><p><strong>decode</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – (Optional) whether or not to decode the blob 
 contents into utf-8. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><cite>str</cite></p>
+<dd class="field-even"><p><a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>blob contents, decoded to utf-8.</p>
@@ -69,12 +71,12 @@ contents into utf-8. Defaults to <code class="docutils literal notranslate"><spa
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bucket_name</strong> (<cite>str</cite>) – the bucket hosting the specified blob.</p></li>
-<li><p><strong>blob_name</strong> (<cite>str</cite>) – the blob to read from GCS.</p></li>
+<li><p><strong>bucket_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the bucket hosting the specified blob.</p></li>
+<li><p><strong>blob_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the blob to read from GCS.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><cite>dict</cite></p>
+<dd class="field-even"><p><a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the data from the blob, converted into a dict object.</p>
@@ -90,9 +92,9 @@ The executing account must have (at least) write permissions to the bucket.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bucket_name</strong> (<cite>str</cite>) – the name of the bucket to which to write.</p></li>
-<li><p><strong>blob_name</strong> (<cite>str</cite>) – the name of the blob to write.</p></li>
-<li><p><strong>data</strong> (<cite>str</cite>) – the data to be written.</p></li>
+<li><p><strong>bucket_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the bucket to which to write.</p></li>
+<li><p><strong>blob_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the blob to write.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the data to be written.</p></li>
 </ul>
 </dd>
 </dl>
@@ -106,11 +108,11 @@ The executing account must have (at least) write permissions to the bucket.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bucket_name</strong> (<cite>str</cite>) – the name of the bucket to which to write.</p></li>
-<li><p><strong>blob_name</strong> (<cite>str</cite>) – the name of the blob to write.</p></li>
-<li><p><strong>json_data</strong> (<cite>dict</cite>) – the data to be written. will be converted to 
+<li><p><strong>bucket_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the bucket to which to write.</p></li>
+<li><p><strong>blob_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the blob to write.</p></li>
+<li><p><strong>json_data</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – the data to be written. will be converted to 
 JSON NLD before uploading for compatibility with BQ.</p></li>
-<li><p><strong>add_date</strong> (<cite>bool</cite>) – (Optional) whether or not to add upload date to 
+<li><p><strong>add_date</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – (Optional) whether or not to add upload date to 
 the data before upload. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>

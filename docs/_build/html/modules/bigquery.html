@@ -8,6 +8,7 @@
     <title>BigQuery &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -39,6 +40,7 @@
 <div class="section" id="bibtutils-gcp-bigquery">
 <h2>bibtutils.gcp.bigquery<a class="headerlink" href="#bibtutils-gcp-bigquery" title="Permalink to this headline">¶</a></h2>
 <p>Functionality making use of GCP’s BigQuery.</p>
+<p>See the official BigQuery Python Client documentation here: <a class="reference external" href="https://googleapis.dev/python/bigquery/latest/index.html">link</a>.</p>
 <dl class="py function">
 <dt id="bibtutils.gcp.bigquery.query">
 <code class="sig-prename descclassname"><span class="pre">bibtutils.gcp.bigquery.</span></code><code class="sig-name descname"><span class="pre">query</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bibtutils/gcp/bigquery.html#query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bibtutils.gcp.bigquery.query" title="Permalink to this definition">¶</a></dt>
@@ -48,10 +50,10 @@ Job Create permissions in the GCP Project and at least
 Data Viewer on the target dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>query</strong> (<cite>str</cite>) – a full BQ query (e.g. <code class="docutils literal notranslate"><span class="pre">'select</span> <span class="pre">*</span> <span class="pre">from</span> <span class="pre">`x.y.z`</span> <span class="pre">where</span> <span class="pre">a=b'</span></code>)</p>
+<dd class="field-odd"><p><strong>query</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – a full BQ query (e.g. <code class="docutils literal notranslate"><span class="pre">'select</span> <span class="pre">*</span> <span class="pre">from</span> <span class="pre">`x.y.z`</span> <span class="pre">where</span> <span class="pre">a=b'</span></code>)</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><cite>list</cite></p>
+<dd class="field-even"><p><a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>a list of dicts, one row in the result table per dict.</p>
@@ -69,14 +71,14 @@ jobs user role in the project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bucket_name</strong> (<cite>str</cite>) – the bucket hosting the specified blob.</p></li>
-<li><p><strong>blob_name</strong> (<cite>str</cite>) – the blob to upload to BQ. must be in JSON NLD format.</p></li>
-<li><p><strong>bq_project</strong> (<cite>str</cite>) – the project hosting the specified BQ dataset.</p></li>
-<li><p><strong>dataset</strong> (<cite>str</cite>) – the dataset hosting the specified table.</p></li>
-<li><p><strong>table</strong> (<cite>str</cite>) – the table to which to upload the blob.</p></li>
-<li><p><strong>append</strong> (<cite>bool</cite>) – (Optional) if true, will append to table. 
+<li><p><strong>bucket_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the bucket hosting the specified blob.</p></li>
+<li><p><strong>blob_name</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the blob to upload to BQ. must be in JSON NLD format.</p></li>
+<li><p><strong>bq_project</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the project hosting the specified BQ dataset.</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the dataset hosting the specified table.</p></li>
+<li><p><strong>table</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the table to which to upload the blob.</p></li>
+<li><p><strong>append</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – (Optional) if true, will append to table. 
 if false, will overwrite. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>ignore_unknown</strong> (<cite>bool</cite>) – (Optional) if true, will ignore values not 
+<li><p><strong>ignore_unknown</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – (Optional) if true, will ignore values not 
 reflected in table schema while uploading. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>

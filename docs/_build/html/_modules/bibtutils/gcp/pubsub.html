@@ -8,6 +8,7 @@
     <title>bibtutils.gcp.pubsub &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
@@ -16,6 +17,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+    <link rel="apple-touch-icon" href="../../../_static/./bibt.ico" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -37,6 +40,8 @@
 
 <span class="sd">Functionality making use of GCP&#39;s PubSubs.</span>
 
+<span class="sd">See the official PubSub Python Client documentation here: `link &lt;https://googleapis.dev/python/pubsub/latest/index.html&gt;`_.</span>
+
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">from</span> <span class="nn">bibtutils.slack.alert</span> <span class="kn">import</span> <span class="n">send_cf_fail_alert</span>
@@ -54,14 +59,14 @@
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Dispatches the next iteration of the function.</span>
 
-<span class="sd">    :type payload: `dict`</span>
+<span class="sd">    :type payload: :py:class:`dict`</span>
 <span class="sd">    :param payload: the pubsub payload.</span>
 
-<span class="sd">    :type proj_envar: `str`</span>
+<span class="sd">    :type proj_envar: :py:class:`str`</span>
 <span class="sd">    :param proj_envar: (Optional) the environment variable to </span>
 <span class="sd">        reference for current GCP project. Defaults to ``&#39;_GOOGLE_PROJECT&#39;``.</span>
 <span class="sd">    </span>
-<span class="sd">    :type topic_envar: `str`</span>
+<span class="sd">    :type topic_envar: :py:class:`str`</span>
 <span class="sd">    :param topic_envar: (Optional) the environment variable to </span>
 <span class="sd">        reference for the triggering pubsub topic. Defaults to ``&#39;_TRIGGER_TOPIC&#39;``.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -81,11 +86,11 @@
 <span class="sd">    Publishes a pubsub message to the specified topic. Executing account </span>
 <span class="sd">    must have pubsub publisher permissions on the topic or in the project.</span>
 
-<span class="sd">    :type topic_uri: `str`</span>
+<span class="sd">    :type topic_uri: :py:class:`str`</span>
 <span class="sd">    :param topic_uri: the topic on which to publish. </span>
-<span class="sd">        topic uri format: ``projects/{project_name}/topics/{topic_name}``</span>
+<span class="sd">        topic uri format: ``&#39;projects/{project_name}/topics/{topic_name}&#39;``</span>
 
-<span class="sd">    :type payload: `dict`</span>
+<span class="sd">    :type payload: :py:class:`dict`</span>
 <span class="sd">    :param payload: the pubsub payload.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">publisher</span> <span class="o">=</span> <span class="n">pubsub_v1</span><span class="o">.</span><span class="n">PublisherClient</span><span class="p">()</span>
@@ -105,22 +110,22 @@
 <span class="sd">    whose name should be provided in the environment variable specified in the </span>
 <span class="sd">    function call. **It expects a full secret URI, not just a name!** If the </span>
 <span class="sd">    triggering pubsub has a payload, will decode it as utf-8 and return it. </span>
-<span class="sd">    Otherwise, will return None.</span>
+<span class="sd">    Otherwise, will return ``None``.</span>
 
 <span class="sd">    :type context: :class:`google.cloud.functions.Context`</span>
 <span class="sd">    :param context: the triggering pubsub&#39;s context.</span>
 <span class="sd">    </span>
-<span class="sd">    :type timeout_secs: int</span>
+<span class="sd">    :type timeout_secs: :py:class:`int`</span>
 <span class="sd">    :param timeout_secs: (Optional) the number of seconds to consider as </span>
 <span class="sd">        the timeout threshold from the original trigger time. Defaults to 1800.</span>
 <span class="sd">    </span>
-<span class="sd">    :type fail_alert_webhook_secret_uri: str</span>
+<span class="sd">    :type fail_alert_webhook_secret_uri: :py:class:`str`</span>
 <span class="sd">    :param fail_alert_webhook_secret_uri: (Optional) the name of the </span>
 <span class="sd">        environment variable from which to read the secret URI. Defaults </span>
 <span class="sd">        to ``&#39;FAIL_ALERT_WEBHOOK_SECRET_URI&#39;``. secret uri format in the </span>
-<span class="sd">        envar: ``projects/{host_project}/secrets/{secret_name}/versions/latest``.</span>
+<span class="sd">        envar: ``&#39;projects/{host_project}/secrets/{secret_name}/versions/latest&#39;``.</span>
 
-<span class="sd">    :rtype: `str` OR `None`</span>
+<span class="sd">    :rtype: :py:class:`str` OR :py:class:`None`</span>
 <span class="sd">    :returns: the pubsub payload, if present.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">utctime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
@@ -157,7 +162,14 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">bibtutils</a></h1>
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/./bibt.ico" alt="Logo"/>
+    
+    <h1 class="logo logo-name">bibtutils</h1>
+    
+  </a>
+</p>
 
 
 

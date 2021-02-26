@@ -1,6 +1,0 @@
-Sanity Check
-~~~~~~~~~~~~
-
-.. automodule:: bibtutils.sanitycheck
-  :members:
-  :show-inheritance:

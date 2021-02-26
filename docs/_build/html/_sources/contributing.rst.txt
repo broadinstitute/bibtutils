@@ -16,7 +16,7 @@ Updating and publishing a new package
 
 .. code:: bash
 
-    $ pip install --upgrade bump2version pdoc3
+    $ pip install --upgrade bump2version
 
 -  **Note**: You cannot publish a package with the same version number
    as another already-published version! **You must use bump2version**
@@ -24,14 +24,18 @@ Updating and publishing a new package
 
 .. code:: bash
 
-    $ pdoc3 --html --output-dir docs/html --force .
-    $ git add .
-    $ git commit -m "msg"
-    $ bumpversion major|minor|patch # with bump2version, bumpversion is an alias
-    # to trigger a package & release
-    $ git push --tags
-    # and to update main branch
-    $ git push
+   # test documentation build
+   $ cd docs && make html
+   # see any undocumented objects
+   $ make html -b coverage
+
+   $ git add .
+   $ git commit -m "msg"
+   $ bumpversion major|minor|patch # with bump2version, bumpversion is an alias
+   # to trigger a package & release
+   $ git push --tags
+   # and to update main branch
+   $ git push
 
 Getting Comfortable: Tutorials and Resources
 --------------------------------------------
@@ -44,4 +48,5 @@ Getting Comfortable: Tutorials and Resources
    Reference <https://packaging.python.org/guides/distributing-packages-using-setuptools/>`__
 -  `GitHub Actions <https://github.com/features/actions>`__
 -  `bump2version <https://github.com/c4urself/bump2version>`__
+
 

@@ -12,7 +12,7 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 def testfunc():
     '''A test function which prints to stdout and logs a message to the logger.
 
-    :rtype: `NoneType`
+    :rtype: :py:class:`NoneType`
     :returns: Nothing.
     '''
     logging.info('Hello world')

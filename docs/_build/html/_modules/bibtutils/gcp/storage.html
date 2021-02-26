@@ -8,6 +8,7 @@
     <title>bibtutils.gcp.storage &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
@@ -16,6 +17,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+    <link rel="apple-touch-icon" href="../../../_static/./bibt.ico" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -37,9 +40,12 @@
 
 <span class="sd">Functionality making use of GCP&#39;s Cloud Storage.</span>
 
+<span class="sd">See the official Cloud Storage Python Client documentation here: `link &lt;https://googleapis.dev/python/storage/latest/index.html&gt;`_.</span>
+
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
@@ -51,13 +57,13 @@
 <span class="sd">    Writes a String to GCS storage under a given blob name to the given bucket.</span>
 <span class="sd">    The executing account must have (at least) write permissions to the bucket.</span>
 
-<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :type bucket_name: :py:class:`str`</span>
 <span class="sd">    :param bucket_name: the name of the bucket to which to write.</span>
 
-<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :type blob_name: :py:class:`str`</span>
 <span class="sd">    :param blob_name: the name of the blob to write.</span>
 
-<span class="sd">    :type data: `str`</span>
+<span class="sd">    :type data: :py:class:`str`</span>
 <span class="sd">    :param data: the data to be written.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
@@ -73,17 +79,17 @@
 <span class="sd">    Reads the contents of a blob from GCS. Service account must </span>
 <span class="sd">    have (at least) read permissions on the bucket/blob.</span>
 
-<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :type bucket_name: :py:class:`str`</span>
 <span class="sd">    :param bucket_name: the bucket hosting the specified blob.</span>
 
-<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :type blob_name: :py:class:`str`</span>
 <span class="sd">    :param blob_name: the blob to read from GCS.</span>
 
-<span class="sd">    :type decode: `bool`</span>
+<span class="sd">    :type decode: :py:class:`bool`</span>
 <span class="sd">    :param decode: (Optional) whether or not to decode the blob </span>
 <span class="sd">        contents into utf-8. Defaults to ``True``.</span>
 
-<span class="sd">    :rtype: `str`</span>
+<span class="sd">    :rtype: :py:class:`str`</span>
 <span class="sd">    :returns: blob contents, decoded to utf-8.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Getting gs://</span><span class="si">{</span><span class="n">bucket_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -100,25 +106,25 @@
 <span class="sd">    Writes a dict to GCS storage under a given blob name to the given bucket.</span>
 <span class="sd">    The executing account must have (at least) write permissions to the bucket.</span>
 
-<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :type bucket_name: :py:class:`str`</span>
 <span class="sd">    :param bucket_name: the name of the bucket to which to write.</span>
 
-<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :type blob_name: :py:class:`str`</span>
 <span class="sd">    :param blob_name: the name of the blob to write.</span>
 
-<span class="sd">    :type json_data: `dict`</span>
+<span class="sd">    :type json_data: :py:class:`dict`</span>
 <span class="sd">    :param json_data: the data to be written. will be converted to </span>
 <span class="sd">        JSON NLD before uploading for compatibility with BQ.</span>
 
-<span class="sd">    :type add_date: `bool`</span>
+<span class="sd">    :type add_date: :py:class:`bool`</span>
 <span class="sd">    :param add_date: (Optional) whether or not to add upload date to </span>
 <span class="sd">        the data before upload. Defaults to ``False``.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">nld_json</span> <span class="o">=</span> <span class="n">_generate_json_nld</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
+    <span class="n">nld_json</span> <span class="o">=</span> <span class="n">_generate_json_nld</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">add_date</span><span class="p">)</span>
     <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
     <span class="n">blob</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">blob_name</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Dumping to storage </span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">)</span>
-    <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_string</span><span class="p">(</span><span class="n">nld_json</span><span class="p">,</span> <span class="n">add_date</span><span class="o">=</span><span class="n">add_date</span><span class="p">)</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_string</span><span class="p">(</span><span class="n">nld_json</span><span class="p">)</span>
     <span class="k">return</span></div>
 
 
@@ -127,14 +133,14 @@
 <span class="sd">    Takes a dict object and returns a string in JSON NLD format. </span>
 <span class="sd">    Compatible with uploading to BQ.</span>
 
-<span class="sd">    :type json_data: `dict`</span>
+<span class="sd">    :type json_data: :py:class:`dict`</span>
 <span class="sd">    :param json_data: the data to be converted to JSON NLD.</span>
 
-<span class="sd">    :type add_date: `bool`</span>
+<span class="sd">    :type add_date: :py:class:`bool`</span>
 <span class="sd">    :param add_date: whether or not to add upload date to the </span>
 <span class="sd">        data before upload.</span>
 
-<span class="sd">    :rtype: `str`</span>
+<span class="sd">    :rtype: :py:class:`str`</span>
 <span class="sd">    :returns: formatted JSON NLD.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Generating JSON NLD...&#39;</span><span class="p">)</span>
@@ -151,13 +157,13 @@
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reads a blob in JSON NLD format from GCS and returns it as a dict.</span>
 
-<span class="sd">    :type bucket_name: `str`</span>
+<span class="sd">    :type bucket_name: :py:class:`str`</span>
 <span class="sd">    :param bucket_name: the bucket hosting the specified blob.</span>
 
-<span class="sd">    :type blob_name: `str`</span>
+<span class="sd">    :type blob_name: :py:class:`str`</span>
 <span class="sd">    :param blob_name: the blob to read from GCS.</span>
 
-<span class="sd">    :rtype: `dict`</span>
+<span class="sd">    :rtype: :py:class:`dict`</span>
 <span class="sd">    :returns: the data from the blob, converted into a dict object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Getting gs://</span><span class="si">{</span><span class="n">bucket_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">blob_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -176,7 +182,14 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">bibtutils</a></h1>
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/./bibt.ico" alt="Logo"/>
+    
+    <h1 class="logo logo-name">bibtutils</h1>
+    
+  </a>
+</p>
 
 
 

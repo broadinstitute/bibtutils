@@ -4,6 +4,8 @@ bibtutils.gcp.secrets
 
 Functionality making use of GCP's Secret Manager.
 
+See the official Secret Manager Python Client documentation here: `link <https://googleapis.dev/python/secretmanager/latest/index.html>`_.
+
 '''
 
 from google.cloud import secretmanager
@@ -17,13 +19,13 @@ def get_secret(host_project, secret_name):
     '''
     An alias for :func:`~bibtutils.gcp.secrets.get_secret_json`.
 
-    :type host_project: `str`
+    :type host_project: :py:class:`str`
     :param host_project: the name of the host project of the secret.
 
-    :type secret_name: `str`
+    :type secret_name: :py:class:`str`
     :param secret_name: the name of the secret to fetch.
 
-    :rtype: `dict`
+    :rtype: :py:class:`dict`
     :returns: the secret data.
     '''
     return get_secret_json(host_project, secret_name)
@@ -35,13 +37,13 @@ def get_secret_json(host_project, secret_name):
     Executing account must have (at least) secret version accessor 
     permissions on the secret. Note: secret must be in JSON format.
 
-    :type host_project: `str`
+    :type host_project: :py:class:`str`
     :param host_project: the name of the host project of the secret.
 
-    :type secret_name: `str`
+    :type secret_name: :py:class:`str`
     :param secret_name: the name of the secret to fetch.
 
-    :rtype: `dict`
+    :rtype: :py:class:`dict`
     :returns: the secret data.
     '''
     secret_uri = f'projects/{host_project}/secrets/{secret_name}/versions/latest'
@@ -63,17 +65,17 @@ def get_secret_by_name(host_project, secret_name, decode=True):
     Executing account must have (at least) secret version 
     accessor permissions on the secret.
 
-    :type host_project: `str`
+    :type host_project: :py:class:`str`
     :param host_project: the name of the host project of the secret.
 
-    :type secret_name: `str`
+    :type secret_name: :py:class:`str`
     :param secret_name: the name of the secret to fetch.
 
-    :type decode: `bool`
+    :type decode: :py:class:`bool`
     :param decode: (Optional) whether or not to decode the bytes. 
         Defaults to ``True``.
 
-    :rtype: `bytes` OR `str`
+    :rtype: :py:class:`bytes` OR :py:class:`str`
     :returns: the secret data.
     '''
     secret_uri = f'projects/{host_project}/secrets/{secret_name}/versions/latest'
@@ -88,19 +90,19 @@ def get_secret_by_name(host_project, secret_name, decode=True):
 def get_secret_by_uri(secret_uri, decode=True):
     '''
     Gets a secret from GCP and returns it either as decoded 
-    utf-8 or raw bytes (depending on `decode` parameter).
+    utf-8 or raw bytes (depending on ``decode`` parameter).
     Executing account must have (at least) secret version 
     accessor permissions on the secret.
 
-    :type secret_uri: `str`
+    :type secret_uri: :py:class:`str`
     :param secret_uri: the uri of the secret to fetch. secret uri format: 
-        `projects/{host_project}/secrets/{secret_name}/versions/latest`
+        ``'projects/{host_project}/secrets/{secret_name}/versions/latest'``
     
-    :type decode: `bool`
+    :type decode: :py:class:`bool`
     :param decode: (Optional) whether or not to decode the bytes. 
         Defaults to ``True``.
 
-    :rtype: `bytes` OR `str`
+    :rtype: :py:class:`bytes` OR :py:class:`str`
     :returns: the secret data.
     '''
     logging.info(f'Getting secret: {secret_uri}')

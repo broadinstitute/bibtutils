@@ -4,6 +4,8 @@ bibtutils.gcp.bigquery
 
 Functionality making use of GCP's BigQuery.
 
+See the official BigQuery Python Client documentation here: `link <https://googleapis.dev/python/bigquery/latest/index.html>`_.
+
 '''
 
 from google.cloud import bigquery
@@ -19,26 +21,26 @@ def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table,
     and edit permissions on the dataset, in addition to the IAM bigquery 
     jobs user role in the project.
 
-    :type bucket_name: `str`
+    :type bucket_name: :py:class:`str`
     :param bucket_name: the bucket hosting the specified blob.
 
-    :type blob_name: `str`
+    :type blob_name: :py:class:`str`
     :param blob_name: the blob to upload to BQ. must be in JSON NLD format.
 
-    :type bq_project: `str`
+    :type bq_project: :py:class:`str`
     :param bq_project: the project hosting the specified BQ dataset.
 
-    :type dataset: `str`
+    :type dataset: :py:class:`str`
     :param dataset: the dataset hosting the specified table.
 
-    :type table: `str`
+    :type table: :py:class:`str`
     :param table: the table to which to upload the blob.
 
-    :type append: `bool`
+    :type append: :py:class:`bool`
     :param append: (Optional) if true, will append to table. 
         if false, will overwrite. Defaults to ``True``.
     
-    :type ignore_unknown: `bool`
+    :type ignore_unknown: :py:class:`bool`
     :param ignore_unknown: (Optional) if true, will ignore values not 
         reflected in table schema while uploading. Defaults to ``True``.
     '''
@@ -73,10 +75,10 @@ def query(query):
     Job Create permissions in the GCP Project and at least 
     Data Viewer on the target dataset.
 
-    :type query: `str`
+    :type query: :py:class:`str`
     :param query: a full BQ query (e.g. ``'select * from `x.y.z` where a=b'``)
 
-    :rtype: `list`
+    :rtype: :py:class:`list`
     :returns: a list of dicts, one row in the result table per dict.
     '''
     logging.debug(f'Sending query: {query}')

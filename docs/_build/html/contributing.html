@@ -8,6 +8,7 @@
     <title>Contributor’s Guide &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -47,7 +48,7 @@ file</a> and
 See links below for more resources.</p></li>
 <li><p>Please install the following packages:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install --upgrade bump2version pdoc3
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install --upgrade bump2version
 </pre></div>
 </div>
 <ul class="simple">
@@ -55,7 +56,11 @@ See links below for more resources.</p></li>
 as another already-published version! <strong>You must use bump2version</strong>
 to increment the current version for a publish to be successful.</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pdoc3 --html --output-dir docs/html --force .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># test documentation build</span>
+$ <span class="nb">cd</span> docs <span class="o">&amp;&amp;</span> make html
+<span class="c1"># see any undocumented objects</span>
+$ make html -b coverage
+
 $ git add .
 $ git commit -m <span class="s2">&quot;msg&quot;</span>
 $ bumpversion major<span class="p">|</span>minor<span class="p">|</span>patch <span class="c1"># with bump2version, bumpversion is an alias</span>

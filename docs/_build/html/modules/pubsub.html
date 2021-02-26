@@ -8,6 +8,7 @@
     <title>PubSub &#8212; bibtutils  documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -39,6 +40,7 @@
 <div class="section" id="bibtutils-gcp-pubsub">
 <h2>bibtutils.gcp.pubsub<a class="headerlink" href="#bibtutils-gcp-pubsub" title="Permalink to this headline">¶</a></h2>
 <p>Functionality making use of GCP’s PubSubs.</p>
+<p>See the official PubSub Python Client documentation here: <a class="reference external" href="https://googleapis.dev/python/pubsub/latest/index.html">link</a>.</p>
 <dl class="py function">
 <dt id="bibtutils.gcp.pubsub.process_trigger">
 <code class="sig-prename descclassname"><span class="pre">bibtutils.gcp.pubsub.</span></code><code class="sig-name descname"><span class="pre">process_trigger</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_secs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_alert_webhook_secret_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FAIL_ALERT_WEBHOOK_SECRET_URI'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bibtutils/gcp/pubsub.html#process_trigger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bibtutils.gcp.pubsub.process_trigger" title="Permalink to this definition">¶</a></dt>
@@ -48,21 +50,21 @@ will attempt to alert via Slack after fetching a webhook in Secret Manager
 whose name should be provided in the environment variable specified in the 
 function call. <strong>It expects a full secret URI, not just a name!</strong> If the 
 triggering pubsub has a payload, will decode it as utf-8 and return it. 
-Otherwise, will return None.</p>
+Otherwise, will return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">google.cloud.functions.Context</span></code>) – the triggering pubsub’s context.</p></li>
-<li><p><strong>timeout_secs</strong> (<em>int</em>) – (Optional) the number of seconds to consider as 
+<li><p><strong>timeout_secs</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – (Optional) the number of seconds to consider as 
 the timeout threshold from the original trigger time. Defaults to 1800.</p></li>
-<li><p><strong>fail_alert_webhook_secret_uri</strong> (<em>str</em>) – (Optional) the name of the 
+<li><p><strong>fail_alert_webhook_secret_uri</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – (Optional) the name of the 
 environment variable from which to read the secret URI. Defaults 
 to <code class="docutils literal notranslate"><span class="pre">'FAIL_ALERT_WEBHOOK_SECRET_URI'</span></code>. secret uri format in the 
-envar: <code class="docutils literal notranslate"><span class="pre">projects/{host_project}/secrets/{secret_name}/versions/latest</span></code>.</p></li>
+envar: <code class="docutils literal notranslate"><span class="pre">'projects/{host_project}/secrets/{secret_name}/versions/latest'</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><cite>str</cite> OR <cite>None</cite></p>
+<dd class="field-even"><p><a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> OR <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the pubsub payload, if present.</p>
@@ -77,10 +79,10 @@ envar: <code class="docutils literal notranslate"><span class="pre">projects/{ho
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>payload</strong> (<cite>dict</cite>) – the pubsub payload.</p></li>
-<li><p><strong>proj_envar</strong> (<cite>str</cite>) – (Optional) the environment variable to 
+<li><p><strong>payload</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – the pubsub payload.</p></li>
+<li><p><strong>proj_envar</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – (Optional) the environment variable to 
 reference for current GCP project. Defaults to <code class="docutils literal notranslate"><span class="pre">'_GOOGLE_PROJECT'</span></code>.</p></li>
-<li><p><strong>topic_envar</strong> (<cite>str</cite>) – (Optional) the environment variable to 
+<li><p><strong>topic_envar</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – (Optional) the environment variable to 
 reference for the triggering pubsub topic. Defaults to <code class="docutils literal notranslate"><span class="pre">'_TRIGGER_TOPIC'</span></code>.</p></li>
 </ul>
 </dd>
@@ -95,9 +97,9 @@ must have pubsub publisher permissions on the topic or in the project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>topic_uri</strong> (<cite>str</cite>) – the topic on which to publish. 
-topic uri format: <code class="docutils literal notranslate"><span class="pre">projects/{project_name}/topics/{topic_name}</span></code></p></li>
-<li><p><strong>payload</strong> (<cite>dict</cite>) – the pubsub payload.</p></li>
+<li><p><strong>topic_uri</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the topic on which to publish. 
+topic uri format: <code class="docutils literal notranslate"><span class="pre">'projects/{project_name}/topics/{topic_name}'</span></code></p></li>
+<li><p><strong>payload</strong> (<a class="reference external" href="https://python.readthedocs.io/en/latest/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – the pubsub payload.</p></li>
 </ul>
 </dd>
 </dl>
