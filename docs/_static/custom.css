@@ -1,0 +1,73 @@
+/* 
+
+Writer: Matthew OBrien
+
+Cited:
+- Broad Institute Styleguide https://drive.google.com/file/d/0B877YjdN2Vv9ZkdPNElpSTZmTDg/view
+
+Colors:
+- Broad Blue:     #006db6
+- Yellow:         #ffcd00
+- Orange:         #ff6a6a
+- Red:            #b12028
+- Light Blue:     #00afd7
+- Green:          #80bc42
+- Grey:           #63666a
+- Purple:         #69488e
+
+*/
+
+dl.function, .footer {
+    /* border-top: 3px solid #d0d0d0; */
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+dl.function dt {
+    border-left: 2px solid #000000;
+    padding: 4px 8px;
+    background-color: #ecf0f3;
+}
+
+p code {
+    font-size: 0.80em;
+}
+
+a.reference.external code {
+    font-weight: normal;
+    color: #006db6;
+    background-color: #ecf0f3;
+}
+
+span.viewcode-link {
+    color: #006db6;
+}
+
+code.sig-name.descname {
+    color: #006db6;
+}
+
+code.sig-prename.descclassname {
+    font-size: 0.80em;
+}
+
+em.sig-param .n {
+    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+    font-size: 0.9em;
+    color: #963333;
+}
+
+em.sig-param .o {
+    color: #000000;
+}
+
+em.sig-param .default_value {
+    color: #499100;
+    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+    font-size: 0.9em;
+    font-style: normal;
+}
+
+dl.field-list dt.field-odd {
+    min-width: max-content;
+}
