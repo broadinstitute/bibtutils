@@ -16,7 +16,7 @@ import json
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
-def write_gcs(bucket_name, blob_name, data):
+def write_gcs(bucket_name, blob_name, data, content_type='text/plain'):
     '''
     Writes a String to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
@@ -29,11 +29,14 @@ def write_gcs(bucket_name, blob_name, data):
 
     :type data: :py:class:`str`
     :param data: the data to be written.
+
+    :type content_type: :py:class:`str`
+    :param content_type: (Optional) the content_type being uploaded. defaults to ``'text/plain'``.
     '''
     storage_client = storage.Client()
     blob = storage_client.get_bucket(bucket_name).blob(blob_name)
     logging.info(f'Writing to GCS: gs://{bucket_name}/{blob_name}')
-    blob.upload_from_string(data)
+    blob.upload_from_string(data, content_type=content_type)
     logging.info('Upload complete.')
     return
 
