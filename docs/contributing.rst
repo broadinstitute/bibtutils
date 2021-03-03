@@ -29,6 +29,21 @@ Updating and publishing a new package
    # see any undocumented objects
    $ make html -b coverage
 
+   # Handling an open issue
+   # ...assign the issue to yourself in Github...
+   $ git checkout -b issue-1
+   # ...make fixes...
+   $ git add .
+   $ git commit -m "fixes issue-1"
+   $ git push --set-upstream origin issue-1
+   # ...open PR...
+   # ...PR merged, issue closed automatically...
+   $ git checkout main
+   $ git pull
+   $ git bumpversion
+   $ git push --tags
+   # Code packaged, documentation updated, and version released automatically!
+
    $ git add .
    $ git commit -m "msg"
    $ bumpversion major|minor|patch # with bump2version, bumpversion is an alias
