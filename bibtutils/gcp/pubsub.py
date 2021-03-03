@@ -14,6 +14,7 @@ from google.cloud import pubsub_v1
 import os
 import json
 import logging
+import base64
 from dateutil.parser import parse
 from datetime import datetime, timezone
 
@@ -108,7 +109,7 @@ def process_trigger(context, event=None, timeout_secs=1800,
         try:
             webhook = get_secret_by_uri(os.environ.get(fail_alert_webhook_secret_uri))
             try:
-                send_cf_fail_alert()
+                send_cf_fail_alert(utctime, eventtime, webhook)
             except Exception as e:
                 logging.error(f'Could not send fail alert to Slack: {type(e).__name__}{e}')
                 pass
