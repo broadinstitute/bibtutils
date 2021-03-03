@@ -66,18 +66,21 @@ def send_pubsub(topic_uri, payload):
     return
 
 
-def process_trigger(context, timeout_secs=1800, 
+def process_trigger(context, event=None, timeout_secs=1800, 
         fail_alert_webhook_secret_uri='FAIL_ALERT_WEBHOOK_SECRET_URI'):
     '''Check timestamp of triggering event; catches infinite retry 
     loops on 'retry on fail' cloud functions. If the timeout has been exceeded, 
     will attempt to alert via Slack after fetching a webhook in Secret Manager 
     whose name should be provided in the environment variable specified in the 
     function call. **It expects a full secret URI, not just a name!** If the 
-    triggering pubsub has a payload, will decode it as utf-8 and return it. 
-    Otherwise, will return ``None``.
+    triggering pubsub's event is also passed and has a payload, will decode 
+    it as utf-8 and return it. Otherwise, will return ``None``.
 
     :type context: :class:`google.cloud.functions.Context`
     :param context: the triggering pubsub's context.
+
+    :type event: :py:class:`dict`
+    :param event: (Optional) the triggering pubsub's event. defaults to :py:class:`None`.
     
     :type timeout_secs: :py:class:`int`
     :param timeout_secs: (Optional) the number of seconds to consider as 
@@ -114,7 +117,7 @@ def process_trigger(context, timeout_secs=1800,
             pass
         return
 
-    if 'data' in event:
+    if event != None and 'data' in event:
         return base64.b64decode(event['data']).decode('utf-8')
     
     return None
