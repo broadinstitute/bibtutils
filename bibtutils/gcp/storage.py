@@ -16,7 +16,7 @@ import json
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
-def write_gcs(bucket_name, blob_name, data, content_type='text/plain'):
+def write_gcs(bucket_name, blob_name, data, mime_type='text/plain'):
     '''
     Writes a String to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
@@ -31,12 +31,12 @@ def write_gcs(bucket_name, blob_name, data, content_type='text/plain'):
     :param data: the data to be written.
 
     :type content_type: :py:class:`str`
-    :param content_type: (Optional) the content_type being uploaded. defaults to ``'text/plain'``.
+    :param content_type: (Optional) the `MIME type <https://www.iana.org/assignments/media-types/media-types.xhtml>`_ being uploaded. defaults to ``'text/plain'``.
     '''
     storage_client = storage.Client()
     blob = storage_client.get_bucket(bucket_name).blob(blob_name)
     logging.info(f'Writing to GCS: gs://{bucket_name}/{blob_name}')
-    blob.upload_from_string(data, content_type=content_type)
+    blob.upload_from_string(data, content_type=mime_type)
     logging.info('Upload complete.')
     return
 
@@ -88,10 +88,7 @@ def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False):
         the data before upload. Defaults to ``False``.
     '''
     nld_json = _generate_json_nld(json_data, add_date)
-    storage_client = storage.Client()
-    blob = storage_client.get_bucket(bucket_name, timeout=3).blob(blob_name)
-    logging.info(f'Dumping to storage {blob_name}...')
-    blob.upload_from_string(nld_json)
+    write_gcs(bucket_name, blob_name, nld_json)
     return
 
 
@@ -133,10 +130,7 @@ def read_gcs_nldjson(bucket_name, blob_name):
     :rtype: :py:class:`dict`
     :returns: the data from the blob, converted into a dict object.
     '''
-    logging.info(f'Getting gs://{bucket_name}/{blob_name}')
-    storage_client = storage.Client()
-    blob = storage_client.get_bucket(bucket_name).get_blob(blob_name)
-    json_nld = blob.download_as_string().decode('utf-8')
+    json_nld = read_gcs(bucket_name, blob_name, decode=True)
     logging.info('Converting from JSON NLD to JSON...')
     json_list = '[' + json_nld.replace('\n', ',')
     json_list = json_list.rstrip(',') + ']'
