@@ -9,6 +9,7 @@ See the official BigQuery Python Client documentation here: `link <https://googl
 '''
 
 from google.cloud import bigquery
+from google.api_core import exceptions as google_exceptions
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -63,7 +64,14 @@ def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table,
             ignore_unknown_values = ignore_unknown
         )
     )
-    load_job.result()
+    
+    try:
+        load_job.result()
+    except google_exceptions.BadRequest:
+        logging.info(load_job.errors)
+        raise SystemError(
+            'Import failed with BadRequest exception. See error data in logs.')
+
     logging.info(f'Upload of {source_uri} to BQ complete.')
     return
 
