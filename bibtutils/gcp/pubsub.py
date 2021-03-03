@@ -14,6 +14,7 @@ from google.cloud import pubsub_v1
 import os
 import json
 import logging
+import base64
 from dateutil.parser import parse
 from datetime import datetime, timezone
 
