@@ -43,31 +43,68 @@ span.viewcode-link {
     color: #006db6;
 }
 
+dl.field-list dt.field-odd {
+    min-width: max-content;
+}
+
+
+/* Code styling */
+
+/* Signature Styling */
+
+em {
+    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+}
+
+/* function name */
 code.sig-name.descname {
     color: #006db6;
 }
 
+/* module(s) prefix */
 code.sig-prename.descclassname {
     font-size: 0.80em;
 }
 
+/* parameters */
 em.sig-param .n {
-    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     font-size: 0.9em;
     color: #963333;
 }
 
+/* operators */
 em.sig-param .o {
     color: #000000;
 }
 
+/* default values */
 em.sig-param .default_value {
     color: #499100;
-    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     font-size: 0.9em;
     font-style: normal;
 }
 
-dl.field-list dt.field-odd {
-    min-width: max-content;
+/* Code Block Styling */
+
+.highlight-python pre {
+    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+    font-size: 0.9em;
 }
+
+/* python statements */
+.highlight-python .kn, .highlight-python .k, .highlight-python .ow {
+    color: #69488e;
+}
+
+/* function names */
+.highlight-python .nf {
+    color: #006db6;
+    font-weight: bold;
+}
+
+/* string modifiers */
+.highlight-python .sa, .highlight-python .si {
+    color: #cb532b;
+}
+
+
