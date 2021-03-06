@@ -4,5 +4,6 @@ dist
 build
 *.egg-info
 .DS_Store
+docs/_build
 tests.py
 docs
