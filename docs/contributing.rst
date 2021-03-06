@@ -25,7 +25,9 @@ Updating and publishing a new package
 .. code:: bash
 
    # test documentation build
-   $ cd docs && make html
+   # Note: if stylesheets are not updating, do a `make clean` before building.
+   $ cd docs
+   $ make html
    # see any undocumented objects
    $ make html -b coverage
 
