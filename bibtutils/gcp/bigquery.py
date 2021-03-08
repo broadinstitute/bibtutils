@@ -14,13 +14,46 @@ import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
+
+def _run_bq_job(job):
+    '''
+    Helper method to run a BQ job and catch/print any errors.
+
+    :type job: :class:`google.cloud.bigquery.job.*`
+    :param job: the BigQuery job to run.
+    '''
+    try:
+        job.result()
+    except google_exceptions.BadRequest:
+        logging.info(job.errors)
+        raise SystemError(
+            'Import failed with BadRequest exception. See error data in logs.')
+    return
+
+
 def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table, 
         append=True, ignore_unknown=True):
     '''
     Uploads a GCS blob in JSON NLD format to the specified table in BQ.
+    
     Executing account must have both read permissions on the bucket/blob 
     and edit permissions on the dataset, in addition to the IAM bigquery 
-    jobs user role in the project.
+    jobs user role in the project. NLD JSON file schema must match that
+    of the destination table.
+
+    Use :func:`~bibtutils.gcp.storage.write_gcs_nldjson` to get a properly
+    formatted blob from JSON objects.
+
+    .. code:: python
+
+        from bibtutils.gcp.bigquery import upload_gcs_json
+        upload_gcs_json(
+            bucket_name='my_bucket',
+            blob_name='my_nldjson_blob',
+            bq_project='my_project',
+            dataset='my_dataset',
+            table='my_table'
+        )
 
     :type bucket_name: :py:class:`str`
     :param bucket_name: the bucket hosting the specified blob.
@@ -64,14 +97,9 @@ def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table,
             ignore_unknown_values = ignore_unknown
         )
     )
-    
-    try:
-        load_job.result()
-    except google_exceptions.BadRequest:
-        logging.info(load_job.errors)
-        raise SystemError(
-            'Import failed with BadRequest exception. See error data in logs.')
 
+    _run_bq_job(load_job)
+    
     logging.info(f'Upload of {source_uri} to BQ complete.')
     return
 
@@ -82,6 +110,16 @@ def query(query):
     as a list of dicts. The account running the query must have 
     Job Create permissions in the GCP Project and at least 
     Data Viewer on the target dataset.
+
+    .. code:: python
+
+        from bibtutils.gcp.bigquery import query
+        fav_color_blue = query(
+            'select name, favorite_color '
+            'from `my_project.my_dataset.my_table` '
+            'where favorite_color="blue"'
+        )
+        print(row['name'] for row in fav_color_blue)
 
     :type query: :py:class:`str`
     :param query: a full BQ query (e.g. ``'select * from `x.y.z` where a=b'``)

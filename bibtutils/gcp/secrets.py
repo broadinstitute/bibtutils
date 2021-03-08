@@ -19,6 +19,12 @@ def get_secret(host_project, secret_name):
     '''
     An alias for :func:`~bibtutils.gcp.secrets.get_secret_json`.
 
+    .. code:: python
+
+        from bibtutils.gcp.secrets import get_secret
+        secret = get_secret('my_project', 'my_secret')
+        print(secret['password'])
+
     :type host_project: :py:class:`str`
     :param host_project: the name of the host project of the secret.
 
@@ -37,6 +43,12 @@ def get_secret_json(host_project, secret_name):
     Executing account must have (at least) secret version accessor 
     permissions on the secret. Note: secret must be in JSON format.
 
+    .. code:: python
+
+        from bibtutils.gcp.secrets import get_secret_json
+        secret = get_secret_json('my_project', 'my_secret')
+        print(secret['password'])
+
     :type host_project: :py:class:`str`
     :param host_project: the name of the host project of the secret.
 
@@ -46,15 +58,7 @@ def get_secret_json(host_project, secret_name):
     :rtype: :py:class:`dict`
     :returns: the secret data.
     '''
-    secret_uri = f'projects/{host_project}/secrets/{secret_name}/versions/latest'
-    logging.info(f'Getting secret: {secret_uri}')
-    client = secretmanager.SecretManagerServiceClient()
-
-    secret = client.access_secret_version(
-        request={'name':secret_uri}, 
-        timeout=3
-    ).payload.data.decode('UTF-8')
-
+    secret = get_secret_by_name(host_project, secret_name, decode=True)
     return json.loads(secret)
 
 
@@ -64,6 +68,12 @@ def get_secret_by_name(host_project, secret_name, decode=True):
     utf-8 or raw bytes (depending on `decode` parameter).
     Executing account must have (at least) secret version 
     accessor permissions on the secret.
+
+    .. code:: python
+
+        from bibtutils.gcp.secrets import get_secret_by_name
+        secret = get_secret_by_name('my_project', 'my_secret')
+        print(secret)
 
     :type host_project: :py:class:`str`
     :param host_project: the name of the host project of the secret.
@@ -79,12 +89,7 @@ def get_secret_by_name(host_project, secret_name, decode=True):
     :returns: the secret data.
     '''
     secret_uri = f'projects/{host_project}/secrets/{secret_name}/versions/latest'
-    logging.info(f'Getting secret: {secret_uri}')
-    client = secretmanager.SecretManagerServiceClient()
-    secret = client.access_secret_version(request={'name':secret_uri}, timeout=3).payload.data
-    if decode:
-        return secret.decode('utf-8')
-    return secret
+    return get_secret_by_uri(secret_uri, decode=decode)
 
 
 def get_secret_by_uri(secret_uri, decode=True):
@@ -93,6 +98,14 @@ def get_secret_by_uri(secret_uri, decode=True):
     utf-8 or raw bytes (depending on ``decode`` parameter).
     Executing account must have (at least) secret version 
     accessor permissions on the secret.
+
+    .. code:: python
+
+        from bibtutils.gcp.secrets import get_secret_by_uri
+        secret = get_secret_by_uri(
+            'projects/my_project/secrets/my_secret/versions/latest'
+        )
+        print(secret)
 
     :type secret_uri: :py:class:`str`
     :param secret_uri: the uri of the secret to fetch. secret uri format: 

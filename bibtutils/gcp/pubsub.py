@@ -20,6 +20,46 @@ from datetime import datetime, timezone
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
+
+def send_pubsub(topic_uri, payload):
+    '''
+    Publishes a pubsub message to the specified topic. Executing account 
+    must have pubsub publisher permissions on the topic or in the project.
+
+    .. code:: python
+
+        from bibtutils.gcp.pubsub import process_trigger, send_pubsub
+        def main(event, context):
+            process_trigger(event)
+            topic_uri = (
+                f'projects/{os.environ["GOOGLE_PROJECT"]}'
+                f'/topics/{os.environ["NEXT_TOPIC"]}'
+            )
+            send_pubsub(
+                topic=topic_uri,
+                payload={'favorite_color': 'blue'}
+            )
+
+    :type topic_uri: :py:class:`str`
+    :param topic_uri: the topic on which to publish. 
+        topic uri format: ``'projects/{project_name}/topics/{topic_name}'``
+
+    :type payload: :py:class:`dict` OR :py:class:`str`
+    :param payload: the pubsub payload. can be either a ``dict`` or a ``str``. 
+        will be converted to bytes before sending.
+    '''
+    publisher = pubsub_v1.PublisherClient()
+    logging.info(f'Payload: {payload}\nPubSub: {topic_uri}')
+    # Convert to Bytes then publish message.
+    if isinstance(payload, dict):
+        payload = json.dumps(payload, default=str)
+    payload_bytes = payload.encode('utf-8')
+    publisher.publish(topic=topic_uri, data=payload_bytes)
+    logging.info('PubSub sent.')
+    return
+
+
+
 def retrigger_self(payload, proj_envar='_GOOGLE_PROJECT', topic_envar='_TRIGGER_TOPIC'):
     '''
     Dispatches the next iteration of a PubSub-triggered Cloud Function.
@@ -49,40 +89,6 @@ def retrigger_self(payload, proj_envar='_GOOGLE_PROJECT', topic_envar='_TRIGGER_
     send_pubsub(topic, payload)
     return
 
-
-def send_pubsub(topic_uri, payload):
-    '''
-    Publishes a pubsub message to the specified topic. Executing account 
-    must have pubsub publisher permissions on the topic or in the project.
-
-    .. code:: python
-
-        from bibtutils.gcp.pubsub import process_trigger, send_pubsub
-        def main(event, context):
-            process_trigger(event)
-            topic_uri = f'projects/{os.environ["GOOGLE_PROJECT"]}/topics/{os.environ["NEXT_TOPIC"]}'
-            send_pubsub(
-                topic=topic_uri,
-                payload={'favorite color': 'blue'}
-            )
-
-    :type topic_uri: :py:class:`str`
-    :param topic_uri: the topic on which to publish. 
-        topic uri format: ``'projects/{project_name}/topics/{topic_name}'``
-
-    :type payload: :py:class:`dict` OR :py:class:`str`
-    :param payload: the pubsub payload. can be either a ``dict`` or a ``str``. 
-        will be converted to bytes before sending.
-    '''
-    publisher = pubsub_v1.PublisherClient()
-    logging.info(f'Payload: {payload}\nPubSub: {topic_uri}')
-    # Convert to Bytes then publish message.
-    if isinstance(payload, dict):
-        payload = json.dumps(payload)
-    payload_bytes = payload.encode('utf-8')
-    publisher.publish(topic=topic_uri, data=payload_bytes)
-    logging.info('PubSub sent.')
-    return
 
 
 def process_trigger(context, event=None, timeout_secs=1800, 
@@ -145,10 +151,14 @@ def process_trigger(context, event=None, timeout_secs=1800,
             try:
                 send_cf_fail_alert(utctime, eventtime, webhook['hook'])
             except Exception as e:
-                logging.error(f'Could not send fail alert to Slack: {type(e).__name__}{e}')
+                logging.error(f'Could not send fail alert to Slack: {type(e).__name__} : {e}')
                 pass
         except Exception as e:
-            logging.error(f'Could not get the Slack alert webhook from envar: {fail_alert_webhook_secret_uri}. Did you set a value here? Exception: {type(e).__name__}:{e}')
+            logging.error(
+                'Could not get the Slack alert webhook from envar: '
+                f'{fail_alert_webhook_secret_uri}. Did you set a value '
+                f'here? Exception: {type(e).__name__}:{e}'
+            )
             pass
         return
 

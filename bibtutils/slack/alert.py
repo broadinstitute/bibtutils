@@ -89,6 +89,18 @@ def send_cf_fail_alert(currenttime, eventtime, webhook, proj_envar='_GOOGLE_PROJ
 def send_cf_error(message, webhook, proj_envar='_GOOGLE_PROJECT'):
     '''Sends an error message to Slack. Not necessarily indicative of a crash.
 
+    .. code:: python
+    
+        from bibtutils.slack.alert import send_cf_error
+        try:
+            raise IOError('Invalid input!')
+        except IOError as e:
+            send_cf_error(
+                f'IOError raised! Error: {e}',
+                'https://hooks.slack.com/services/1234/1234/1234'
+            )
+            pass
+
     :type message: :py:class:`str`
     :param message: a description of the error, included as an 
         attachment in the Slack message.

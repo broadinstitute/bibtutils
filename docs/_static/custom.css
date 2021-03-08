@@ -86,9 +86,14 @@ em.sig-param .default_value {
 
 /* Code Block Styling */
 
+/* background */
+div.highlight pre {
+    background-color: #f5f9fc
+}
+
 .highlight-python pre {
     font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 /* python statements */
