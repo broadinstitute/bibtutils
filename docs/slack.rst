@@ -2,7 +2,7 @@ Slack
 ~~~~~
 
 .. toctree::
-  :maxdepth: 2
+    :maxdepth: 1
 
-  modules/error
-  modules/message
+    modules/slack/error
+    modules/slack/message

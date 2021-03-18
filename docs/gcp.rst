@@ -4,7 +4,7 @@ Google Cloud Platform
 .. toctree::
     :maxdepth: 1
 
-    modules/bigquery
-    modules/pubsub
-    modules/secrets
-    modules/storage
+    modules/gcp/bigquery
+    modules/gcp/pubsub
+    modules/gcp/secrets
+    modules/gcp/storage
