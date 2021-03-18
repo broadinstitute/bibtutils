@@ -8,7 +8,7 @@ See the official PubSub Python Client documentation here: `link <https://googlea
 
 '''
 
-from bibtutils.slack.alert import send_cf_fail_alert
+from bibtutils.slack.error import send_cf_fail_alert
 from bibtutils.gcp.secrets import get_secret_by_uri
 from google.cloud import pubsub_v1
 import os
@@ -113,7 +113,6 @@ def process_trigger(context, event=None, timeout_secs=1800,
             payload = process_trigger(context, event=event)
             if not payload:
                 raise IOError('No payload in triggering pubsub!')
-            
             payload = json.loads(payload)
 
     :type context: :class:`google.cloud.functions.Context`
@@ -157,7 +156,7 @@ def process_trigger(context, event=None, timeout_secs=1800,
             logging.error(
                 'Could not get the Slack alert webhook from envar: '
                 f'{fail_alert_webhook_secret_uri}. Did you set a value '
-                f'here? Exception: {type(e).__name__}:{e}'
+                f'here? Exception: {type(e).__name__} : {e}'
             )
             pass
         return
