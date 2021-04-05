@@ -147,6 +147,7 @@ def process_trigger(context, event=None, timeout_secs=1800,
         )
         try:
             webhook = get_secret_by_uri(os.environ.get(fail_alert_webhook_secret_uri))
+            webhook = json.loads(webhook)
             try:
                 send_cf_fail_alert(utctime, eventtime, webhook['hook'])
             except Exception as e:
@@ -159,7 +160,7 @@ def process_trigger(context, event=None, timeout_secs=1800,
                 f'here? Exception: {type(e).__name__} : {e}'
             )
             pass
-        return
+        exit(0)
 
     if event != None and 'data' in event:
         return base64.b64decode(event['data']).decode('utf-8')

@@ -7,3 +7,4 @@ build
 docs/_build
 tests.py
 docs
+qualys

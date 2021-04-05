@@ -13,6 +13,7 @@ from bibtutils.slack.message import send_message
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
+
 def _get_cfname():
     '''Helper function to get the current cloud function name. 
     References environment variables set by GCP (``'K_SERVICE'`` for Python 3.8+, 
@@ -25,8 +26,9 @@ def _get_cfname():
     cfname = os.environ.get('K_SERVICE', default=None)
     # If not, check for older name (Python 3.7)
     if not cfname:
-        cfname = os.environ.get('FUNCTION_NAME', default='UNKNOWN')
+        cfname = os.environ.get('FUNCTION_NAME', default='UNKNOWN (running locally?)')
     return cfname
+
 
 def send_cf_fail_alert(currenttime, eventtime, webhook, proj_envar='_GOOGLE_PROJECT'):
     '''Sends a cloud function runtime failure alert to Slack. 

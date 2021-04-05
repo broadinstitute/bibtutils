@@ -80,10 +80,11 @@ def read_gcs_nldjson(bucket_name, blob_name):
 
 
 
-def write_gcs(bucket_name, blob_name, data, mime_type='text/plain'):
+def write_gcs(bucket_name, blob_name, data, mime_type='text/plain', timeout=storage.constants._DEFAULT_TIMEOUT):
     '''
     Writes a String to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
+    If ``data`` is a `str`, will be encoded as utf-8 before uploading.
 
     .. code:: python
 
@@ -96,7 +97,7 @@ def write_gcs(bucket_name, blob_name, data, mime_type='text/plain'):
     :type blob_name: :py:class:`str`
     :param blob_name: the name of the blob to write.
 
-    :type data: :py:class:`str`
+    :type data: :py:class:`str` OR :py:class:`bytes`
     :param data: the data to be written.
 
     :type content_type: :py:class:`str`
@@ -107,13 +108,13 @@ def write_gcs(bucket_name, blob_name, data, mime_type='text/plain'):
     storage_client = storage.Client()
     blob = storage_client.get_bucket(bucket_name).blob(blob_name)
     logging.info(f'Writing to GCS: gs://{bucket_name}/{blob_name}')
-    blob.upload_from_string(data, content_type=mime_type)
+    blob.upload_from_string(data, content_type=mime_type, timeout=timeout)
     logging.info('Upload complete.')
     return
 
 
 
-def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False):
+def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False, timeout=storage.constants._DEFAULT_TIMEOUT):
     '''
     Writes a dict to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
@@ -150,7 +151,7 @@ def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False):
         the data before upload. Defaults to ``False``.
     '''
     nld_json = _generate_json_nld(json_data, add_date)
-    write_gcs(bucket_name, blob_name, nld_json)
+    write_gcs(bucket_name, blob_name, nld_json, timeout=timeout)
     return
 
 
