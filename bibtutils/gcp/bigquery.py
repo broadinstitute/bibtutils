@@ -32,7 +32,7 @@ def _run_bq_job(job):
 
 
 def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table, 
-        append=True, ignore_unknown=True):
+        append=True, ignore_unknown=True, autodetect_schema=False):
     '''
     Uploads a GCS blob in JSON NLD format to the specified table in BQ.
     
@@ -77,6 +77,10 @@ def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table,
     :type ignore_unknown: :py:class:`bool`
     :param ignore_unknown: (Optional) if true, will ignore values not 
         reflected in table schema while uploading. Defaults to ``True``.
+        
+    :type autodetect_schema: :py:class:`bool`
+    :param autodetect_schema: (Optional) if true, will instruct BQ to 
+        automatically detect the schema of the data being uploaded. Defaults to ``False``.
     '''
     # TODO: allow schema update options? https://googleapis.dev/python/bigquery/latest/generated/google.cloud.bigquery.job.SchemaUpdateOption.html#google.cloud.bigquery.job.SchemaUpdateOption
 
@@ -92,6 +96,7 @@ def upload_gcs_json(bucket_name, blob_name, bq_project, dataset, table,
         source_uris = source_uri,
         destination = client.get_table(table_ref),
         job_config = bigquery.LoadJobConfig(
+            autodetect=autodetect_schema,
             write_disposition = write_disp,
             source_format = bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
             ignore_unknown_values = ignore_unknown

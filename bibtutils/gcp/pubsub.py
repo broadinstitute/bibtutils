@@ -36,7 +36,7 @@ def send_pubsub(topic_uri, payload):
                 f'/topics/{os.environ["NEXT_TOPIC"]}'
             )
             send_pubsub(
-                topic=topic_uri,
+                topic_uri=topic_uri,
                 payload={'favorite_color': 'blue'}
             )
 
