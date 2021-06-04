@@ -8,3 +8,5 @@ docs/_build
 tests.py
 docs
 qualys
+test_gcp.py
+creds
