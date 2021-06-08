@@ -41,6 +41,8 @@ Updating and publishing a new package
    `bumpversion file <./.bumpversion.cfg>`__ for configuration details.
    See links below for more resources.
 
+-  Please keep ``CHANGELOG.md`` up to date.
+
 -  Please install the following packages:
 
 .. code:: bash

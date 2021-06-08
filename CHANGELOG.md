@@ -2,7 +2,7 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
-## [0.4.1](https://www.github.com/broadinstitute/bibtutils/compare/v0.4.0...v0.5.0) (2021-06-)
+## [0.5.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.4.0...v0.5.0) (2021-06-08)
 
 ### Features
 
