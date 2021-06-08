@@ -1,0 +1,1 @@
+Download your service account keyfile from https://console.cloud.google.com/iam-admin/serviceaccounts and store it in this directory under the name "service_account.json".

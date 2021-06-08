@@ -9,4 +9,5 @@ tests.py
 docs
 qualys
 test_gcp.py
-creds
+creds/**
+tests/config.py

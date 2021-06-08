@@ -12,6 +12,15 @@
 $ pip install --upgrade bibtutils
 ```
 
+## Testing
+
+- Requires Docker to be installed on your system.
+- Clone this repo and create & run the test container:
+
+```
+$ docker build -f ./Dockerfile -t bibtutils-test . && docker run bibtutils-test
+```
+
 ## Usage
 
 - See documentation here: https://bibtutils.readthedocs.io/en/latest/

@@ -9,12 +9,45 @@ See the official Cloud Storage Python Client documentation here: `link <https://
 '''
 
 from google.cloud import storage
+from google.api_core import exceptions as google_exceptions
 import datetime
 import logging
 import json
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
+def create_bucket(project, bucket_name):
+    '''
+    Creates a Google Cloud Storage bucket in the specified project.
+    
+    :type project: :py:class:`str`
+    :param project: the project in which to create the bucket. The account 
+        being used **must** have "Storage Admin" rights on **the GCP project**.
+    
+    :type bucket_name: :py:class:`str`
+    :param bucket_name: the name of the bucket to create. Note that 
+        bucket names must be **universally** unique in GCP, and need to 
+        adhere to the GCS bucket naming guidelines: 
+        https://cloud.google.com/storage/docs/naming-buckets
+
+    :rtype: :py:class:`gcp_storage:google.cloud.storage.bucket.Bucket`
+    :returns:  The bucket created during this function call.
+    '''
+    logging.info(f'Attempting to create bucket: [{bucket_name}] in project: [{project}]')
+    client = storage.Client()
+    bucket = client.bucket(bucket_name)
+    try:
+        bucket = client.create_bucket(bucket, project=project, location='us')
+    except google_exceptions.Forbidden as e:
+        logging.error(
+            'Current account does not have required permissions to create '
+            f'buckets in GCP project: [{project}]. Navigate to '
+            f'https://console.cloud.google.com/iam-admin/iam?project={project} '
+            'and add the "Storage Admin" role to the appropriate account.'
+        )
+        raise e
+    logging.info(f'Bucket: [{bucket.name}] created successfully.')
+    return bucket
 
 def read_gcs(bucket_name, blob_name, decode=True):
     '''
@@ -70,7 +103,7 @@ def read_gcs_nldjson(bucket_name, blob_name):
     :param blob_name: the blob to read from GCS.
 
     :rtype: :py:class:`list`
-    :returns: the data from the blob, converted into a list of dicts.
+    :returns: the data from the blob, converted into a list of :py:class:`dict`.
     '''
     json_nld = read_gcs(bucket_name, blob_name, decode=True)
     logging.info('Converting from JSON NLD to JSON...')
@@ -80,7 +113,8 @@ def read_gcs_nldjson(bucket_name, blob_name):
 
 
 
-def write_gcs(bucket_name, blob_name, data, mime_type='text/plain', timeout=storage.constants._DEFAULT_TIMEOUT):
+def write_gcs(bucket_name, blob_name, data, mime_type='text/plain', 
+        create_bucket_if_not_found=False, timeout=storage.constants._DEFAULT_TIMEOUT):
     '''
     Writes a String to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
@@ -99,6 +133,10 @@ def write_gcs(bucket_name, blob_name, data, mime_type='text/plain', timeout=stor
 
     :type data: :py:class:`str` OR :py:class:`bytes`
     :param data: the data to be written.
+    
+    :type create_bucket_if_not_found: :py:class:`bool`
+    :param create_bucket_if_not_found: (Optional) if ``True``, will attempt to 
+        create the bucket if it does not exist. Defaults to ``False``.
 
     :type content_type: :py:class:`str`
     :param content_type: (Optional) the 
@@ -106,7 +144,14 @@ def write_gcs(bucket_name, blob_name, data, mime_type='text/plain', timeout=stor
         being uploaded. defaults to ``'text/plain'``.
     '''
     storage_client = storage.Client()
-    blob = storage_client.get_bucket(bucket_name).blob(blob_name)
+    try:
+        bucket = storage_client.get_bucket(bucket_name)
+    except google_exceptions.NotFound as e:
+        logging.error(e.message)
+        logging.info(f'create_bucket_if_not_found=={create_bucket_if_not_found}')
+        if not create_bucket_if_not_found: raise e
+        bucket = create_bucket(storage_client.project, bucket_name)
+    blob = bucket.blob(blob_name)
     logging.info(f'Writing to GCS: gs://{bucket_name}/{blob_name}')
     blob.upload_from_string(data, content_type=mime_type, timeout=timeout)
     logging.info('Upload complete.')
@@ -114,7 +159,8 @@ def write_gcs(bucket_name, blob_name, data, mime_type='text/plain', timeout=stor
 
 
 
-def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False, timeout=storage.constants._DEFAULT_TIMEOUT):
+def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False, 
+        create_bucket_if_not_found=False, timeout=storage.constants._DEFAULT_TIMEOUT):
     '''
     Writes a dict to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
@@ -151,7 +197,11 @@ def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False, timeout
         the data before upload. Defaults to ``False``.
     '''
     nld_json = _generate_json_nld(json_data, add_date)
-    write_gcs(bucket_name, blob_name, nld_json, timeout=timeout)
+    write_gcs(
+        bucket_name, blob_name, nld_json, 
+        create_bucket_if_not_found=create_bucket_if_not_found, 
+        timeout=timeout
+    )
     return
 
 

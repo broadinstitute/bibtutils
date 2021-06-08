@@ -13,6 +13,5 @@ COPY tests tests
 
 ARG CREDS_FILE=./creds/service_account.json
 COPY $CREDS_FILE /usr/creds/creds.json
-ENV GCP_SANDBOX_BIBTUTILS_TEST=/usr/creds/creds.json
 
-CMD [ "pytest", "tests/test_gcp.py" ]
+CMD [ "pytest", "tests" ]

@@ -63,7 +63,6 @@ API Reference
 
    gcp
    slack
-   modules/sanitycheck
 
 Contributing
 ------------
