@@ -6,7 +6,7 @@
 
 ### Features
 
-* Added CHANGELOG.md
+* Added `CHANGELOG.md`
 * Clarified testing instructions on the "Contributing" page and in `README.md`.
 * Split tests into different files for different submodules.
 * Use `intersphinx` to link to GCP resource documentations.
@@ -14,13 +14,13 @@
 
 #### Storage
 
-* Added create_bucket functionality.
+* Added `create_bucket` functionality.
 * Added functionality to permit automatic bucket creation during data upload.
 
 #### Bigquery
 
-* Added create_table functionality. Supports TimePartioning by field and/or upload intervals on the default `_PARTITIONTIME` field.
-* Added a create_and_upload function combining both table creation and GCS JSONNLD data upload into one call.
+* Added `create_table` functionality. Supports TimePartioning by field and/or upload intervals on the default `_PARTITIONTIME` field.
+* Added a `create_and_upload` function combining both table creation and GCS JSONNLD data upload into one call.
 * Added support for specifying schemas during table creation and/or data upload.
 
 ## [0.4.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.3.5...v0.4.0) (2021-06-04)
