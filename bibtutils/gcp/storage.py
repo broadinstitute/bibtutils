@@ -195,6 +195,11 @@ def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False,
     :type add_date: :py:class:`bool`
     :param add_date: (Optional) whether or not to add upload date to 
         the data before upload. Defaults to ``False``.
+    
+    :type create_bucket_if_not_found: :py:class:`bool`
+    :param create_bucket_if_not_found: (Optional) if ``True``, will attempt to 
+        create the bucket if it does not exist. Defaults to ``False``.
+
     '''
     nld_json = _generate_json_nld(json_data, add_date)
     write_gcs(
