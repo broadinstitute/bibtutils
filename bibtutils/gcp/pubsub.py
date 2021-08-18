@@ -91,14 +91,16 @@ def retrigger_self(payload, proj_envar='_GOOGLE_PROJECT', topic_envar='_TRIGGER_
 
 
 
-def process_trigger(context, event=None, timeout_secs=1800, 
+def process_trigger(context, event=None, timeout_secs=1800, notify_slack=False,
         fail_alert_webhook_secret_uri='FAIL_ALERT_WEBHOOK_SECRET_URI'):
     '''Check timestamp of triggering event; catches infinite retry 
     loops on 'retry on fail' cloud functions. Its good practice to always call
-    this function first in a Cloud Function.
+    this function first in a Cloud Function. Additionally, **be sure to wrap the call 
+    to this function in a try/except block where the except block returns normally.**
+    This ensures that an exception raised here does not result in an infinite rety loop.
     
     If the timeout has been exceeded, will attempt to alert via Slack after 
-    fetching a webhook in Secret Manager whose name should be provided in the 
+    fetching a webhook in Secret Manager whose URI should be provided in the 
     environment variable specified in the function call. **It expects to find a 
     full secret URI in that environment variable, not just a secret name!**
     
@@ -110,10 +112,14 @@ def process_trigger(context, event=None, timeout_secs=1800,
         import json
         from bibtutil.gcp.pubsub import process_trigger
         def main(event, context):
-            payload = process_trigger(context, event=event)
-            if not payload:
-                raise IOError('No payload in triggering pubsub!')
-            payload = json.loads(payload)
+            try:
+                payload = process_trigger(context, event=event)
+                if not payload:
+                    raise IOError('No payload in triggering pubsub!')
+                payload = json.loads(payload)
+            except:
+                logging.critical(f'Exception while processing trigger: {type(e).__name__}: {e}')
+                return
 
     :type context: :class:`google.cloud.functions.Context`
     :param context: the triggering pubsub's context.
@@ -124,6 +130,11 @@ def process_trigger(context, event=None, timeout_secs=1800,
     :type timeout_secs: :py:class:`int`
     :param timeout_secs: (Optional) the number of seconds to consider as 
         the timeout threshold from the original trigger time. Defaults to 1800.
+    
+    :type notify_slack: :py:class:`bool`
+    :param notify_slack: (Optional) whether or not to attempt to notify 
+        a slack channel specified by `fail_alert_webhook_secret_uri`. If 
+        the notification attempt fails, simply passes. Defaults to `False`
     
     :type fail_alert_webhook_secret_uri: :py:class:`str`
     :param fail_alert_webhook_secret_uri: (Optional) the name of the 
@@ -145,22 +156,26 @@ def process_trigger(context, event=None, timeout_secs=1800,
             f'Threshold of {timeout_secs} seconds exceeded by '
             f'{lapsed.total_seconds()-timeout_secs} seconds. Exiting.'
         )
-        try:
-            webhook = get_secret_by_uri(os.environ.get(fail_alert_webhook_secret_uri))
-            webhook = json.loads(webhook)
+        if notify_slack == True:
             try:
-                send_cf_fail_alert(utctime, eventtime, webhook['hook'])
+                webhook = get_secret_by_uri(os.environ.get(fail_alert_webhook_secret_uri))
+                webhook = json.loads(webhook)
+                try:
+                    send_cf_fail_alert(utctime, eventtime, webhook['hook'])
+                except Exception as e:
+                    logging.error(f'Could not send fail alert to Slack: {type(e).__name__} : {e}')
+                    pass
             except Exception as e:
-                logging.error(f'Could not send fail alert to Slack: {type(e).__name__} : {e}')
+                logging.error(
+                    'Could not get the Slack alert webhook from envar: '
+                    f'{fail_alert_webhook_secret_uri}. Did you set a value '
+                    f'here? Exception: {type(e).__name__} : {e}'
+                )
                 pass
-        except Exception as e:
-            logging.error(
-                'Could not get the Slack alert webhook from envar: '
-                f'{fail_alert_webhook_secret_uri}. Did you set a value '
-                f'here? Exception: {type(e).__name__} : {e}'
-            )
-            pass
-        exit(0)
+        raise TimeoutError(
+            f'Threshold of {timeout_secs} seconds exceeded by '
+            f'{lapsed.total_seconds()-timeout_secs} seconds. Exiting.'
+        )
 
     if event != None and 'data' in event:
         return base64.b64decode(event['data']).decode('utf-8')
