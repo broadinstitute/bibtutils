@@ -99,7 +99,7 @@ def process_trigger(context, event=None, timeout_secs=1800, notify_slack=False,
     to this function in a try/except block where the except block returns normally.**
     This ensures that an exception raised here does not result in an infinite rety loop.
     
-    If the timeout has been exceeded, will attempt to alert via Slack after 
+    If the timeout has been exceeded and `notify_slack=True`, will attempt to alert via Slack after 
     fetching a webhook in Secret Manager whose URI should be provided in the 
     environment variable specified in the function call. **It expects to find a 
     full secret URI in that environment variable, not just a secret name!**
