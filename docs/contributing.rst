@@ -80,10 +80,10 @@ Updating and publishing a new package
    $ git add .
    $ git commit -m "msg"
    $ bumpversion major|minor|patch # with bump2version, bumpversion is an alias
-   # to trigger a package & release
-   $ git push --tags
    # and to update main branch
    $ git push
+   # to trigger a package & release
+   $ git push --tags
 
 Getting Comfortable: Tutorials and Resources
 --------------------------------------------
