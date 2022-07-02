@@ -41,10 +41,10 @@ repos:
     -   id: detect-secrets
         args: ['--disable-plugin', 'KeywordDetector']
 
-  - repo: https://github.com/psf/black
+-   repo: https://github.com/psf/black
     rev: 22.1.0
     hooks:
-      - id: black
+    -   id: black
         # It is recommended to specify the latest version of Python
         # supported by your project here, or alternatively use
         # pre-commit's default_language_version, see

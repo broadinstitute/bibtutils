@@ -86,5 +86,6 @@ add_module_names = True
 intersphinx_mapping = {
     "python": ("https://python.readthedocs.org/en/latest/", None),
     "gcp_storage": ("https://googleapis.dev/python/storage/latest/", None),
-    "gcp_bigquery": ("https://googleapis.dev/python/bigquery/latest/", None)
+    "gcp_bigquery": ("https://googleapis.dev/python/bigquery/latest/", None),
+    "google_auth": ("https://googleapis.dev/python/google-auth/latest/", None)
 }

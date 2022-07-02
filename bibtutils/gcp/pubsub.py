@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
-def send_pubsub(topic_uri, payload):
+def send_pubsub(topic_uri, payload, credentials=None):
     """
     Publishes a pubsub message to the specified topic. Executing account
     must have pubsub publisher permissions on the topic or in the project.
@@ -47,8 +47,12 @@ def send_pubsub(topic_uri, payload):
     :type payload: :py:class:`dict` OR :py:class:`str`
     :param payload: the pubsub payload. can be either a ``dict`` or a ``str``.
         will be converted to bytes before sending.
+    
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
     """
-    publisher = pubsub_v1.PublisherClient()
+    publisher = pubsub_v1.PublisherClient(credentials=credentials)
     logging.info(f"Payload: {payload}\nPubSub: {topic_uri}")
     # Convert to Bytes then publish message.
     if isinstance(payload, dict):
@@ -59,9 +63,10 @@ def send_pubsub(topic_uri, payload):
     return
 
 
-def retrigger_self(payload, proj_envar="_GOOGLE_PROJECT", topic_envar="_TRIGGER_TOPIC"):
+def retrigger_self(payload, proj_envar="_GOOGLE_PROJECT", topic_envar="_TRIGGER_TOPIC", **kwargs):
     """
     Dispatches the next iteration of a PubSub-triggered Cloud Function.
+    Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.pubsub.send_pubsub` function.
 
     .. code:: python
 
@@ -87,7 +92,7 @@ def retrigger_self(payload, proj_envar="_GOOGLE_PROJECT", topic_envar="_TRIGGER_
     topic = (
         f"projects/{os.environ.get(proj_envar)}/topics/{os.environ.get(topic_envar)}"
     )
-    send_pubsub(topic, payload)
+    send_pubsub(topic, payload, **kwargs)
     return
 
 
@@ -149,7 +154,6 @@ def process_trigger(
 
     :rtype: :py:class:`str` OR :py:class:`None`
     :returns: the pubsub payload, if present.
-
     """
     logging.info(f"Processing PubSub: {context.event_id}")
     utctime = datetime.now(timezone.utc)

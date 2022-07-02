@@ -22,10 +22,14 @@ def create_table(
     schema_json=[],
     time_partitioning_interval=None,
     time_partitioning_field=None,
+    credentials=None,
     **kwargs,
 ):
     """
     Creates a table in BigQuery using the specified parameters.
+
+    Any extra args (``kwargs``) are passed to the 
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_table` method.
 
     :type bq_project: :py:class:`str`
     :param bq_project: the project in which to find the dataset.
@@ -40,7 +44,7 @@ def create_table(
     :param schema_json: (Optional) the schema for the new table. Defaults
         to an empty list (no schema). The format of the schema should be
         identical to what is returned by
-        ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'
+        ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'``
 
     :type time_partitioning_interval: :py:class:`str`
     :param time_partitioning_interval: (Optional) if specified, will
@@ -57,6 +61,10 @@ def create_table(
         partition interval, this parameter cannot be ``DATE``. The field
         must also be ``NULLABLE`` or ``REQUIRED`` according to the schema.
         Defaults to ``None``.
+    
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
     """
     table_id = f"{bq_project}.{dataset}.{table}"
     logging.info(f"Attempting to create table: {table_id}")
@@ -64,10 +72,13 @@ def create_table(
     if schema_json and len(schema_json) > 0:
         schema_structs = _generate_schema_struct(schema_json)
     logging.info("Sending create_table API request...")
-    client = bigquery.Client()
+    client = bigquery.Client(project=bq_project, credentials=credentials)
     table = bigquery.Table(table_id, schema=schema_structs)
     if time_partitioning_interval or time_partitioning_field:
-        logging.info("Partioning specified. Configuring...")
+        logging.info(
+            f"Partioning specified [{time_partitioning_interval}/"
+            f"{time_partitioning_field}]. Configuring..."
+        )
         partitioning_interval = None
         if time_partitioning_interval:
             if time_partitioning_interval.upper() == "HOUR":
@@ -86,22 +97,73 @@ def create_table(
     return
 
 
-def delete_table(bq_project, dataset, table, **kwargs):
+def delete_table(bq_project, dataset, table, credentials=None, **kwargs):
+    """
+    Method to delete a given table. 
+
+    Any extra args (``kwargs``) are passed to the 
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.delete_table` method.
+
+    :type bq_project: :py:class:`str`
+    :param bq_project: the bq project where the dataset lives.
+
+    :type dataset: :py:class:`str`
+    :param dataset: the bq dataset where the table lives.
+
+    :type table: :py:class:`str`
+    :param table: the bq table to delete.
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+    """
     table_id = f"{bq_project}.{dataset}.{table}"
     logging.info(f"Attempting to delete table: {table_id}")
-    client = bigquery.Client()
+    client = bigquery.Client(project=bq_project, credentials=credentials)
     client.delete_table(table_id, **kwargs)
     logging.info(f"Table deleted: {table_id}")
     return
 
 
 def _get_schema(bq_project, dataset, table):
-    client = bigquery.Client()
-    table = bigquery.Table(table_id, schema=schema_structs)
+    """
+    Helper method to return the schema of a given table.
+
+    :type bq_project: :py:class:`str`
+    :param bq_project: the bq project where the dataset lives.
+
+    :type dataset: :py:class:`str`
+    :param dataset: the bq dataset where the table lives.
+
+    :type table: :py:class:`str`
+    :param table: the bq table to fetch the schema for.
+    """
+    client = bigquery.Client(project=bq_project)
+    table = bigquery.Table(f"{bq_project}.{dataset}.{table}")
     return table.schema
 
 
-def _generate_schema(bucket_name, blob_name, bq_project, dataset):
+def _generate_schema(bucket_name, blob_name, bq_project, dataset, credentials=None):
+    """
+    Helper method to get an auto-generated schema based on input data in a bucket. Note that
+    this will create and delete a temporary table in order to generate the schema.
+
+    :type bucket_name: :py:class:`str`
+    :param bucket_name: the location of the input data to generate a schema for.
+
+    :type blob_name: :py:class:`str`
+    :param blob_name: the input data to generate a schema for.
+
+    :type bq_project: :py:class:`str`
+    :param bq_project: the bq project in which to make the temporary table.
+
+    :type dataset: :py:class:`str`
+    :param dataset: the bq dataset in which to make the temporary table.
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+    """
     create_and_upload(
         bucket_name,
         blob_name,
@@ -110,9 +172,10 @@ def _generate_schema(bucket_name, blob_name, bq_project, dataset):
         "temp_table_autodetect_schema",
         autodetect_schema=True,
         ignore_unknown=False,
+        credentials=credentials
     )
-    schema = _get_schema(bq_project, dataset, "temp_table_autodetect_schema")
-    delete_table(bq_project, dataset, "temp_table_autodetect_schema")
+    schema = _get_schema(bq_project, dataset, "temp_table_autodetect_schema", credentials=credentials)
+    delete_table(bq_project, dataset, "temp_table_autodetect_schema", credentials=credentials)
     return schema
 
 
@@ -173,6 +236,7 @@ def upload_gcs_json(
     ignore_unknown=True,
     autodetect_schema=False,
     schema_json=None,
+    credentials=None,
     **kwargs,
 ):
     """
@@ -185,6 +249,9 @@ def upload_gcs_json(
 
     Use :func:`~bibtutils.gcp.storage.write_gcs_nldjson` to get a properly
     formatted blob from JSON objects.
+
+    Any extra args (``kwargs``) are passed to the 
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.load_table_from_uri` method.
 
     .. code:: python
 
@@ -228,7 +295,11 @@ def upload_gcs_json(
     :param schema_json: (Optional) the schema for the new table. Defaults
         to an empty list (no schema). The format of the schema should be
         identical to what is returned by
-        ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'
+        ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'``
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
     """
     # TODO: allow schema update options? https://googleapis.dev/python/bigquery/latest/generated/google.cloud.bigquery.job.SchemaUpdateOption.html#google.cloud.bigquery.job.SchemaUpdateOption
 
@@ -248,7 +319,7 @@ def upload_gcs_json(
         write_disp = bigquery.WriteDisposition.WRITE_APPEND
     else:
         write_disp = bigquery.WriteDisposition.WRITE_TRUNCATE
-    client = bigquery.Client()
+    client = bigquery.Client(project=bq_project, credentials=credentials)
     load_job = client.load_table_from_uri(
         source_uris=source_uri,
         destination=client.get_table(table_ref),
@@ -282,12 +353,15 @@ def create_and_upload(
     time_partitioning_interval=None,
     time_partitioning_field=None,
     already_created_ok=False,
+    credentials=None
 ):
     """
     Combines the functionality of :func:`~bibtutils.gcp.bigquery.create_table`
     and :func:`~bibtutils.gcp.bigquery.upload_gcs_json`. You may
     specify whether upload should proceed if the table already exists. You may
     also either specify the desired schema or ask BQ to autodetect the schema.
+
+    Note this function does NOT support ``kwargs``.
 
     :type bucket_name: :py:class:`str`
     :param bucket_name: the bucket hosting the specified blob.
@@ -322,7 +396,7 @@ def create_and_upload(
     :param schema_json: (Optional) the schema for the new table. Defaults
         to an empty list (no schema). The format of the schema should be
         identical to what is returned by
-        ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'
+        ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'``
 
     :type time_partitioning_interval: :py:class:`str`
     :param time_partitioning_interval: (Optional) if specified, will
@@ -341,6 +415,10 @@ def create_and_upload(
     :type already_created_ok: :py:class:`bool`
     :param already_created_ok: (Optional) whether or not to proceed with data upload
         if the table already exists. Defaults to ``False`` (will fail if table exists).
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
     """
     logging.info("Starting create_and_upload...")
     if not schema_json and not autodetect_schema and not generate_schema:
@@ -352,7 +430,7 @@ def create_and_upload(
         logging.error(err_msg)
         raise Exception(err_msg)
     elif generate_schema:
-        schema = _generate_schema(bucket_name, blob_name, bq_project, dataset)
+        schema_json = _generate_schema(bucket_name, blob_name, bq_project, dataset, credentials=credentials)
     try:
         create_table(
             bq_project,
@@ -361,6 +439,7 @@ def create_and_upload(
             schema_json=schema_json,
             time_partitioning_interval=time_partitioning_interval,
             time_partitioning_field=time_partitioning_field,
+            credentials=credentials
         )
     except google_exceptions.Conflict as e:
         if not already_created_ok:
@@ -376,13 +455,14 @@ def create_and_upload(
         ignore_unknown=ignore_unknown,
         autodetect_schema=autodetect_schema,
         schema_json=schema_json,
+        credentials=credentials
     )
 
     logging.info("create_and_upload completed successfully.")
     return
 
 
-def query(query):
+def query(query, query_project=None, credentials=None):
     """
     Sends the user-supplied query to BQ and returns the result
     as a list of dicts. The account running the query must have
@@ -402,11 +482,19 @@ def query(query):
     :type query: :py:class:`str`
     :param query: a full BQ query (e.g. ``'select * from `x.y.z` where a=b'``)
 
+    :type query_project: :py:class:`str`
+    :param query_project: the ID of the project in which to run the query. 
+        If not specified, defaults to the environment's credential's project.
+    
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+
     :rtype: :py:class:`list`
     :returns: a list of dicts, one row in the result table per dict.
     """
     logging.debug(f"Sending query: {query}")
-    bq_client = bigquery.Client()
+    bq_client = bigquery.Client(project=query_project, credentials=credentials)
     logging.info("Querying BQ...")
     query_job = bq_client.query(query)
     results = query_job.result()

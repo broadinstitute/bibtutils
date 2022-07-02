@@ -22,13 +22,13 @@ Testing new code
 
 -  The account will need at least the following roles in the specified GCP project
    in order to attempt all tests:
-      -  ``Storage Admin``
-      -  ``BigQuery Job User``
-      -  And the following roles on the below resources (values specified in ``./tests/config.py``):
-            -  ``Storage Admin`` on ``TEST_BUCKET``
-            -  ``BigQuery Admin`` on ``TEST_DATASET``
-            -  ``Publisher`` on ``TEST_PUBSUB``
-            -  ``Secret Version Accessor`` on ``TEST_SECRET``
+   -  ``Storage Admin``
+   -  ``BigQuery Job User``
+   -  And the following roles on the below resources (values specified in ``./tests/config.py``):
+      -  ``Storage Admin`` on ``TEST_BUCKET``
+      -  ``BigQuery Admin`` on ``TEST_DATASET``
+      -  ``Publisher`` on ``TEST_PUBSUB``
+      -  ``Secret Version Accessor`` on ``TEST_SECRET``
 
 Updating and publishing a new package
 -------------------------------------

@@ -17,7 +17,7 @@ import json
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
-def create_bucket(project, bucket_name):
+def create_bucket(project, bucket_name, credentials=None):
     """
     Creates a Google Cloud Storage bucket in the specified project.
 
@@ -31,13 +31,17 @@ def create_bucket(project, bucket_name):
         adhere to the GCS bucket naming guidelines:
         https://cloud.google.com/storage/docs/naming-buckets
 
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+
     :rtype: :py:class:`gcp_storage:google.cloud.storage.bucket.Bucket`
     :returns:  The bucket created during this function call.
     """
     logging.info(
         f"Attempting to create bucket: [{bucket_name}] in project: [{project}]"
     )
-    client = storage.Client()
+    client = storage.Client(credentials=credentials)
     bucket = client.bucket(bucket_name)
     try:
         bucket = client.create_bucket(bucket, project=project, location="us")
@@ -53,7 +57,7 @@ def create_bucket(project, bucket_name):
     return bucket
 
 
-def read_gcs(bucket_name, blob_name, decode=True):
+def read_gcs(bucket_name, blob_name, decode=True, credentials=None):
     """
     Reads the contents of a blob from GCS. Service account must
     have (at least) read permissions on the bucket/blob.
@@ -76,22 +80,27 @@ def read_gcs(bucket_name, blob_name, decode=True):
     :type decode: :py:class:`bool`
     :param decode: (Optional) whether or not to decode the blob
         contents into utf-8. Defaults to ``True``.
+    
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
 
     :rtype: :py:class:`str`
     :returns: blob contents, decoded to utf-8.
     """
     logging.info(f"Getting gs://{bucket_name}/{blob_name}")
-    storage_client = storage.Client()
-    blob = storage_client.get_bucket(bucket_name).get_blob(blob_name)
+    client = storage.Client(credentials=credentials)
+    blob = client.get_bucket(bucket_name).get_blob(blob_name)
     contents = blob.download_as_bytes()
     if decode:
         return contents.decode("utf-8")
     return contents
 
 
-def read_gcs_nldjson(bucket_name, blob_name):
+def read_gcs_nldjson(bucket_name, blob_name, **kwargs):
     """
     Reads a blob in JSON NLD format from GCS and returns it as a list of dicts.
+    Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.storage.read_gcs` function.
 
     .. code:: python
 
@@ -108,7 +117,7 @@ def read_gcs_nldjson(bucket_name, blob_name):
     :rtype: :py:class:`list`
     :returns: the data from the blob, converted into a list of :py:class:`dict`.
     """
-    json_nld = read_gcs(bucket_name, blob_name, decode=True)
+    json_nld = read_gcs(bucket_name, blob_name, decode=True, **kwargs)
     logging.info("Converting from JSON NLD to JSON...")
     json_list = "[" + json_nld.replace("\n", ",")
     json_list = json_list.rstrip(",") + "]"
@@ -122,6 +131,7 @@ def write_gcs(
     mime_type="text/plain",
     create_bucket_if_not_found=False,
     timeout=storage.constants._DEFAULT_TIMEOUT,
+    credentials=None
 ):
     """
     Writes a String to GCS storage under a given blob name to the given bucket.
@@ -145,21 +155,25 @@ def write_gcs(
     :type create_bucket_if_not_found: :py:class:`bool`
     :param create_bucket_if_not_found: (Optional) if ``True``, will attempt to
         create the bucket if it does not exist. Defaults to ``False``.
+    
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
 
     :type content_type: :py:class:`str`
     :param content_type: (Optional) the
         `MIME type <https://www.iana.org/assignments/media-types/media-types.xhtml>`_
         being uploaded. defaults to ``'text/plain'``.
     """
-    storage_client = storage.Client()
+    client = storage.Client(credentials=credentials)
     try:
-        bucket = storage_client.get_bucket(bucket_name)
+        bucket = client.get_bucket(bucket_name)
     except google_exceptions.NotFound as e:
         logging.error(e.message)
         logging.info(f"create_bucket_if_not_found=={create_bucket_if_not_found}")
         if not create_bucket_if_not_found:
             raise e
-        bucket = create_bucket(storage_client.project, bucket_name)
+        bucket = create_bucket(client.project, bucket_name)
     blob = bucket.blob(blob_name)
     logging.info(f"Writing to GCS: gs://{bucket_name}/{blob_name}")
     blob.upload_from_string(data, content_type=mime_type, timeout=timeout)
@@ -172,14 +186,14 @@ def write_gcs_nldjson(
     blob_name,
     json_data,
     add_date=False,
-    create_bucket_if_not_found=False,
-    timeout=storage.constants._DEFAULT_TIMEOUT,
+    **kwargs
 ):
     """
     Writes a dict to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
     Use in conjunction with :func:`~bibtutils.gcp.bigquery.upload_gcs_json` to
     upload JSON data to BigQuery tables.
+    Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.storage.write_gcs` function.
 
     .. code:: python
 
@@ -220,8 +234,7 @@ def write_gcs_nldjson(
         bucket_name,
         blob_name,
         nld_json,
-        create_bucket_if_not_found=create_bucket_if_not_found,
-        timeout=timeout,
+        **kwargs
     )
     return
 

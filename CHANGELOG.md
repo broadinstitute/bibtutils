@@ -10,6 +10,14 @@
 * Merged `dependabot` PRs.
 * Fixed minor documentation errors.
 
+## [0.5.1](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.0...v0.5.1) (2021-06-09)
+
+### Features
+
+* Added some missing parameters to docstrings.
+* Merged `dependabot` PRs.
+* Fixed minor documentation errors.
+
 ## [0.5.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.4.0...v0.5.0) (2021-06-08)
 
 ### Features

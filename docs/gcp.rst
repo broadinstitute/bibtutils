@@ -5,6 +5,7 @@ Google Cloud Platform
     :maxdepth: 1
 
     modules/gcp/bigquery
+    modules/gcp/iam
     modules/gcp/pubsub
     modules/gcp/secrets
     modules/gcp/storage

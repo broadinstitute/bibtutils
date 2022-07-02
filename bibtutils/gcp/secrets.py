@@ -15,9 +15,10 @@ import logging
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
-def get_secret(host_project, secret_name):
+def get_secret(host_project, secret_name, **kwargs):
     """
     An alias for :func:`~bibtutils.gcp.secrets.get_secret_json`.
+    Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.secrets.get_sercret_by_uri` function.
 
     .. code:: python
 
@@ -34,14 +35,15 @@ def get_secret(host_project, secret_name):
     :rtype: :py:class:`dict`
     :returns: the secret data.
     """
-    return get_secret_json(host_project, secret_name)
+    return get_secret_json(host_project, secret_name, **kwargs)
 
 
-def get_secret_json(host_project, secret_name):
+def get_secret_json(host_project, secret_name, **kwargs):
     """
     Gets a secret from GCP and returns it parsed into a dict.
     Executing account must have (at least) secret version accessor
     permissions on the secret. Note: secret must be in JSON format.
+    Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.secrets.get_sercret_by_uri` function.
 
     .. code:: python
 
@@ -58,16 +60,17 @@ def get_secret_json(host_project, secret_name):
     :rtype: :py:class:`dict`
     :returns: the secret data.
     """
-    secret = get_secret_by_name(host_project, secret_name, decode=True)
+    secret = get_secret_by_name(host_project, secret_name, decode=True, **kwargs)
     return json.loads(secret)
 
 
-def get_secret_by_name(host_project, secret_name, decode=True):
+def get_secret_by_name(host_project, secret_name, **kwargs):
     """
     Gets a secret from GCP and returns it either as decoded
     utf-8 or raw bytes (depending on `decode` parameter).
     Executing account must have (at least) secret version
     accessor permissions on the secret.
+    Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.secrets.get_sercret_by_uri` function.
 
     .. code:: python
 
@@ -89,10 +92,10 @@ def get_secret_by_name(host_project, secret_name, decode=True):
     :returns: the secret data.
     """
     secret_uri = f"projects/{host_project}/secrets/{secret_name}/versions/latest"
-    return get_secret_by_uri(secret_uri, decode=decode)
+    return get_secret_by_uri(secret_uri, **kwargs)
 
 
-def get_secret_by_uri(secret_uri, decode=True):
+def get_secret_by_uri(secret_uri, decode=True, credentials=None):
     """
     Gets a secret from GCP and returns it either as decoded
     utf-8 or raw bytes (depending on ``decode`` parameter).
@@ -115,11 +118,15 @@ def get_secret_by_uri(secret_uri, decode=True):
     :param decode: (Optional) whether or not to decode the bytes.
         Defaults to ``True``.
 
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+
     :rtype: :py:class:`bytes` OR :py:class:`str`
     :returns: the secret data.
     """
     logging.info(f"Getting secret: {secret_uri}")
-    client = secretmanager.SecretManagerServiceClient()
+    client = secretmanager.SecretManagerServiceClient(credentials=credentials)
     secret = client.access_secret_version(
         request={"name": secret_uri}, timeout=3
     ).payload.data
