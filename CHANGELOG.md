@@ -2,13 +2,16 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
-## [0.5.1](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.0...v0.5.1) (2021-06-09)
+## [1.0.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.1...v1.0.0`) (2022-07-02)
 
 ### Features
 
-* Added some missing parameters to docstrings.
+* [GCP] Added functionality to support service account impersonation via the IAM library.
+* [GCP] Added support for specified credentials for existing GCP code.
+* [GCP] Minor bug fixes and adjustments.
+* [GCP] Added docstrings for 100% coverage.
+* Updated documentation.
 * Merged `dependabot` PRs.
-* Fixed minor documentation errors.
 
 ## [0.5.1](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.0...v0.5.1) (2021-06-09)
 
