@@ -198,7 +198,7 @@ def _generate_schema_struct(schema_json):
     """
     schema_structs = []
     for column in schema_json:
-        if column["type"] == "RECORD":
+        if "fields" in column.keys():
             struct = bigquery.SchemaField(
                 column["name"],
                 column["type"],
