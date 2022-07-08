@@ -2,6 +2,13 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
+
+## [1.0.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.0...v1.0.1`) (2022-07-08)
+
+### Features
+
+* [GCP] Fix BigQuery schema struct generation to deal properly with fields of type RECORD.
+
 ## [1.0.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.1...v1.0.0`) (2022-07-02)
 
 ### Features
