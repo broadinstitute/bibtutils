@@ -70,7 +70,9 @@ def create_table(
     logging.info(f"Attempting to create table: {table_id}")
     schema_structs = []
     if schema_json and len(schema_json) > 0:
+        logging.info("Building schema...")
         schema_structs = _generate_schema_struct(schema_json)
+        logging.info("Schema built.")
     logging.info("Sending create_table API request...")
     client = bigquery.Client(project=bq_project, credentials=credentials)
     table = bigquery.Table(table_id, schema=schema_structs)
@@ -195,17 +197,23 @@ def _generate_schema_struct(schema_json):
         objects corresponding to the specified schema.
     """
     schema_structs = []
-    logging.info("Building schema...")
     for column in schema_json:
-        schema_structs.append(
-            bigquery.SchemaField(
+        if column["type"] == "RECORD":
+            struct = bigquery.SchemaField(
+                column["name"],
+                column["type"],
+                mode=column.get("mode", "NULLABLE"),
+                description=column.get("description", None),
+                fields=_generate_schema_struct(column["fields"])
+            )
+        else:
+            struct = bigquery.SchemaField(
                 column["name"],
                 column["type"],
                 mode=column.get("mode", "NULLABLE"),
                 description=column.get("description", None),
             )
-        )
-    logging.info("Schema built.")
+        schema_structs.append(struct)
     return schema_structs
 
 
@@ -313,7 +321,9 @@ def upload_gcs_json(
                 'also specifying a schema. Consider setting "autodetect_schema" '
                 "to False to avoid type inference conflicts."
             )
+        logging.info("Building schema...")
         schema_struct = _generate_schema_struct(schema_json)
+        logging.info("Schema built.")
     logging.info(f"Uploading {source_uri} to {table_ref}...")
     if append:
         write_disp = bigquery.WriteDisposition.WRITE_APPEND
