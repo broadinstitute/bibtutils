@@ -12,8 +12,7 @@ from google.cloud import secretmanager
 import json
 import logging
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
+_LOGGER = logging.getLogger(__name__)
 
 def get_secret(host_project, secret_name, **kwargs):
     """
@@ -125,7 +124,7 @@ def get_secret_by_uri(secret_uri, decode=True, credentials=None):
     :rtype: :py:class:`bytes` OR :py:class:`str`
     :returns: the secret data.
     """
-    logging.info(f"Getting secret: {secret_uri}")
+    _LOGGER.info(f"Getting secret: {secret_uri}")
     client = secretmanager.SecretManagerServiceClient(credentials=credentials)
     secret = client.access_secret_version(
         request={"name": secret_uri}, timeout=3

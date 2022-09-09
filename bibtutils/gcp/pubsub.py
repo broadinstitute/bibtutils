@@ -18,8 +18,7 @@ import base64
 from dateutil.parser import parse
 from datetime import datetime, timezone
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
+_LOGGER = logging.getLogger(__name__)
 
 def send_pubsub(topic_uri, payload, credentials=None):
     """
@@ -53,13 +52,13 @@ def send_pubsub(topic_uri, payload, credentials=None):
         use the account running the function for authentication.
     """
     publisher = pubsub_v1.PublisherClient(credentials=credentials)
-    logging.info(f"Payload: {payload}\nPubSub: {topic_uri}")
+    _LOGGER.info(f"Payload: {payload}\nPubSub: {topic_uri}")
     # Convert to Bytes then publish message.
     if isinstance(payload, dict):
         payload = json.dumps(payload, default=str)
     payload_bytes = payload.encode("utf-8")
     publisher.publish(topic=topic_uri, data=payload_bytes)
-    logging.info("PubSub sent.")
+    _LOGGER.info("PubSub sent.")
     return
 
 
@@ -88,7 +87,7 @@ def retrigger_self(payload, proj_envar="_GOOGLE_PROJECT", topic_envar="_TRIGGER_
     :param topic_envar: (Optional) the environment variable to
         reference for the triggering pubsub topic. Defaults to ``'_TRIGGER_TOPIC'``.
     """
-    logging.info(f"Dispatching next worker.")
+    _LOGGER.info(f"Dispatching next worker.")
     topic = (
         f"projects/{os.environ.get(proj_envar)}/topics/{os.environ.get(topic_envar)}"
     )
@@ -128,7 +127,7 @@ def process_trigger(
                     raise IOError('No payload in triggering pubsub!')
                 payload = json.loads(payload)
             except Exception as e:
-                logging.critical(f'Exception while processing trigger: {type(e).__name__}: {e}')
+                _LOGGER.critical(f'Exception while processing trigger: {type(e).__name__}: {e}')
                 return
 
     :type context: :class:`google.cloud.functions.Context`
@@ -155,14 +154,14 @@ def process_trigger(
     :rtype: :py:class:`str` OR :py:class:`None`
     :returns: the pubsub payload, if present.
     """
-    logging.info(f"Processing PubSub: {context.event_id}")
+    _LOGGER.info(f"Processing PubSub: {context.event_id}")
     utctime = datetime.now(timezone.utc)
     eventtime = parse(context.timestamp)
     lapsed = utctime - eventtime
     lapsed = datetime.now(timezone.utc) - parse(context.timestamp)
-    logging.info(f"Lapsed time since triggering event: {lapsed.total_seconds()}")
+    _LOGGER.info(f"Lapsed time since triggering event: {lapsed.total_seconds()}")
     if lapsed.total_seconds() > timeout_secs:
-        logging.critical(
+        _LOGGER.critical(
             f"Threshold of {timeout_secs} seconds exceeded by "
             f"{lapsed.total_seconds()-timeout_secs} seconds. Exiting."
         )
@@ -175,12 +174,12 @@ def process_trigger(
                 try:
                     send_cf_fail_alert(utctime, eventtime, webhook["hook"])
                 except Exception as e:
-                    logging.error(
+                    _LOGGER.error(
                         f"Could not send fail alert to Slack: {type(e).__name__} : {e}"
                     )
                     pass
             except Exception as e:
-                logging.error(
+                _LOGGER.error(
                     "Could not get the Slack alert webhook from envar: "
                     f"{fail_alert_webhook_secret_uri}. Did you set a value "
                     f"here? Exception: {type(e).__name__} : {e}"

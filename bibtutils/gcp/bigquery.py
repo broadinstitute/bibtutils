@@ -12,8 +12,7 @@ from google.cloud import bigquery
 from google.api_core import exceptions as google_exceptions
 import logging
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
+_LOGGER = logging.getLogger(__name__)
 
 def create_table(
     bq_project,
@@ -67,17 +66,17 @@ def create_table(
         use the account running the function for authentication.
     """
     table_id = f"{bq_project}.{dataset}.{table}"
-    logging.info(f"Attempting to create table: {table_id}")
+    _LOGGER.info(f"Attempting to create table: {table_id}")
     schema_structs = []
     if schema_json and len(schema_json) > 0:
-        logging.info("Building schema...")
+        _LOGGER.info("Building schema...")
         schema_structs = _generate_schema_struct(schema_json)
-        logging.info("Schema built.")
-    logging.info("Sending create_table API request...")
+        _LOGGER.info("Schema built.")
+    _LOGGER.info("Sending create_table API request...")
     client = bigquery.Client(project=bq_project, credentials=credentials)
     table = bigquery.Table(table_id, schema=schema_structs)
     if time_partitioning_interval or time_partitioning_field:
-        logging.info(
+        _LOGGER.info(
             f"Partioning specified [{time_partitioning_interval}/"
             f"{time_partitioning_field}]. Configuring..."
         )
@@ -95,7 +94,7 @@ def create_table(
             type_=partitioning_interval, field=time_partitioning_field
         )
     table = client.create_table(table, **kwargs)
-    logging.info(f"Table created: {table_id}")
+    _LOGGER.info(f"Table created: {table_id}")
     return
 
 
@@ -120,10 +119,10 @@ def delete_table(bq_project, dataset, table, credentials=None, **kwargs):
         use the account running the function for authentication.
     """
     table_id = f"{bq_project}.{dataset}.{table}"
-    logging.info(f"Attempting to delete table: {table_id}")
+    _LOGGER.info(f"Attempting to delete table: {table_id}")
     client = bigquery.Client(project=bq_project, credentials=credentials)
     client.delete_table(table_id, **kwargs)
-    logging.info(f"Table deleted: {table_id}")
+    _LOGGER.info(f"Table deleted: {table_id}")
     return
 
 
@@ -227,7 +226,7 @@ def _run_bq_job(job):
     try:
         job.result()
     except google_exceptions.BadRequest:
-        logging.error(job.errors)
+        _LOGGER.error(job.errors)
         raise SystemError(
             "Import failed with BadRequest exception. See error data in logs."
         )
@@ -316,15 +315,15 @@ def upload_gcs_json(
     schema_struct = None
     if schema_json:
         if autodetect_schema:
-            logging.warn(
+            _LOGGER.warn(
                 'You currently have "autodetect_schema" set to True while '
                 'also specifying a schema. Consider setting "autodetect_schema" '
                 "to False to avoid type inference conflicts."
             )
-        logging.info("Building schema...")
+        _LOGGER.info("Building schema...")
         schema_struct = _generate_schema_struct(schema_json)
-        logging.info("Schema built.")
-    logging.info(f"Uploading {source_uri} to {table_ref}...")
+        _LOGGER.info("Schema built.")
+    _LOGGER.info(f"Uploading {source_uri} to {table_ref}...")
     if append:
         write_disp = bigquery.WriteDisposition.WRITE_APPEND
     else:
@@ -345,7 +344,7 @@ def upload_gcs_json(
 
     _run_bq_job(load_job)
 
-    logging.info(f"Upload of {source_uri} to BQ complete.")
+    _LOGGER.info(f"Upload of {source_uri} to BQ complete.")
     return
 
 
@@ -430,14 +429,14 @@ def create_and_upload(
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
     """
-    logging.info("Starting create_and_upload...")
+    _LOGGER.info("Starting create_and_upload...")
     if not schema_json and not autodetect_schema and not generate_schema:
         err_msg = (
             "You did not specify a schema AND did not instruct "
             'BigQuery to infer the schema. Please either set "schema_json" in '
             'the function call or set "autodetect_schema" to True.'
         )
-        logging.error(err_msg)
+        _LOGGER.error(err_msg)
         raise Exception(err_msg)
     elif generate_schema:
         schema_json = _generate_schema(bucket_name, blob_name, bq_project, dataset, credentials=credentials)
@@ -468,7 +467,7 @@ def create_and_upload(
         credentials=credentials
     )
 
-    logging.info("create_and_upload completed successfully.")
+    _LOGGER.info("create_and_upload completed successfully.")
     return
 
 
@@ -503,14 +502,14 @@ def query(query, query_project=None, credentials=None):
     :rtype: :py:class:`list`
     :returns: a list of dicts, one row in the result table per dict.
     """
-    logging.debug(f"Sending query: {query}")
+    _LOGGER.debug(f"Sending query: {query}")
     bq_client = bigquery.Client(project=query_project, credentials=credentials)
-    logging.info("Querying BQ...")
+    _LOGGER.info("Querying BQ...")
     query_job = bq_client.query(query)
     results = query_job.result()
-    logging.info("Iterating over result rows...")
+    _LOGGER.info("Iterating over result rows...")
     results_json = []
     for row in results:
         results_json.append(dict(row.items()))
-    logging.info("Returning results as list of dicts.")
+    _LOGGER.info("Returning results as list of dicts.")
     return results_json

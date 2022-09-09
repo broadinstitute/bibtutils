@@ -12,8 +12,7 @@ import logging
 import requests
 import datetime
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
+_LOGGER = logging.getLogger(__name__)
 
 def send_message(webhook, title, text, color):
     """Sends a message to Slack.

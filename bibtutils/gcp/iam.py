@@ -3,7 +3,7 @@ from google.cloud import iam_credentials
 from google.oauth2 import credentials
 from google.api_core import exceptions as google_exceptions
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+_LOGGER = logging.getLogger(__name__)
 
 def get_access_token(
     acct, scopes=["https://www.googleapis.com/auth/cloud-platform"]
@@ -37,7 +37,7 @@ def get_access_token(
     :returns: an access token with can be used to generate credentials for Google APIs.
     """
     # Create credentials for Logging API at the org level
-    logging.info(f"Getting access token for account: [{acct}] with scope: [{scopes}]")
+    _LOGGER.info(f"Getting access token for account: [{acct}] with scope: [{scopes}]")
     client = iam_credentials.IAMCredentialsClient()
     try:
         resp = client.generate_access_token(
@@ -45,14 +45,14 @@ def get_access_token(
             scope=scopes,
         )
     except google_exceptions.PermissionDenied as e:
-        logging.critical(
+        _LOGGER.critical(
             'Permission denied while attempting to create access token. '
             'Ensure that the account running this function has the "Service Account Token Creator" '
             f'role on the target account ({acct}).'
         )
         raise e
 
-    logging.info("Returning access token.")
+    _LOGGER.info("Returning access token.")
     return resp.access_token
 
 
@@ -89,5 +89,5 @@ def get_credentials(
     """
     access_token = get_access_token(acct=acct, scopes=scopes)
 
-    logging.info('Generating and returning credentials object.')
+    _LOGGER.info('Generating and returning credentials object.')
     return credentials.Credentials(token=access_token)

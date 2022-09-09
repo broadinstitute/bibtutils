@@ -11,7 +11,7 @@ import logging
 import datetime
 from bibtutils.slack.message import send_message
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+_LOGGER = logging.getLogger(__name__)
 
 
 def _get_cfname():

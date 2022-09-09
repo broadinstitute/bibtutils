@@ -14,8 +14,7 @@ import datetime
 import logging
 import json
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
+_LOGGER = logging.getLogger(__name__)
 
 def create_bucket(project, bucket_name, credentials=None):
     """
@@ -38,7 +37,7 @@ def create_bucket(project, bucket_name, credentials=None):
     :rtype: :py:class:`gcp_storage:google.cloud.storage.bucket.Bucket`
     :returns:  The bucket created during this function call.
     """
-    logging.info(
+    _LOGGER.info(
         f"Attempting to create bucket: [{bucket_name}] in project: [{project}]"
     )
     client = storage.Client(credentials=credentials)
@@ -46,14 +45,14 @@ def create_bucket(project, bucket_name, credentials=None):
     try:
         bucket = client.create_bucket(bucket, project=project, location="us")
     except google_exceptions.Forbidden as e:
-        logging.error(
+        _LOGGER.error(
             "Current account does not have required permissions to create "
             f"buckets in GCP project: [{project}]. Navigate to "
             f"https://console.cloud.google.com/iam-admin/iam?project={project} "
             'and add the "Storage Admin" role to the appropriate account.'
         )
         raise e
-    logging.info(f"Bucket: [{bucket.name}] created successfully.")
+    _LOGGER.info(f"Bucket: [{bucket.name}] created successfully.")
     return bucket
 
 
@@ -88,7 +87,7 @@ def read_gcs(bucket_name, blob_name, decode=True, credentials=None):
     :rtype: :py:class:`str`
     :returns: blob contents, decoded to utf-8.
     """
-    logging.info(f"Getting gs://{bucket_name}/{blob_name}")
+    _LOGGER.info(f"Getting gs://{bucket_name}/{blob_name}")
     client = storage.Client(credentials=credentials)
     blob = client.get_bucket(bucket_name).get_blob(blob_name)
     contents = blob.download_as_bytes()
@@ -118,7 +117,7 @@ def read_gcs_nldjson(bucket_name, blob_name, **kwargs):
     :returns: the data from the blob, converted into a list of :py:class:`dict`.
     """
     json_nld = read_gcs(bucket_name, blob_name, decode=True, **kwargs)
-    logging.info("Converting from JSON NLD to JSON...")
+    _LOGGER.info("Converting from JSON NLD to JSON...")
     json_list = "[" + json_nld.replace("\n", ",")
     json_list = json_list.rstrip(",") + "]"
     return json.loads(json_list)
@@ -169,15 +168,15 @@ def write_gcs(
     try:
         bucket = client.get_bucket(bucket_name)
     except google_exceptions.NotFound as e:
-        logging.error(e.message)
-        logging.info(f"create_bucket_if_not_found=={create_bucket_if_not_found}")
+        _LOGGER.error(e.message)
+        _LOGGER.info(f"create_bucket_if_not_found=={create_bucket_if_not_found}")
         if not create_bucket_if_not_found:
             raise e
         bucket = create_bucket(client.project, bucket_name)
     blob = bucket.blob(blob_name)
-    logging.info(f"Writing to GCS: gs://{bucket_name}/{blob_name}")
+    _LOGGER.info(f"Writing to GCS: gs://{bucket_name}/{blob_name}")
     blob.upload_from_string(data, content_type=mime_type, timeout=timeout)
-    logging.info("Upload complete.")
+    _LOGGER.info("Upload complete.")
     return
 
 
@@ -254,7 +253,7 @@ def _generate_json_nld(json_data, add_date):
     :rtype: :py:class:`str`
     :returns: formatted JSON NLD.
     """
-    logging.info("Generating JSON NLD...")
+    _LOGGER.info("Generating JSON NLD...")
     json_nld = ""
     if isinstance(json_data, dict):
         json_data = [json_data]
@@ -262,5 +261,5 @@ def _generate_json_nld(json_data, add_date):
         if add_date:
             item["upload_date"] = datetime.date.today().isoformat()
         json_nld += f"{json.dumps(item)}\n"
-    logging.info("Generated.")
+    _LOGGER.info("Generated.")
     return json_nld
