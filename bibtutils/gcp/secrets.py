@@ -94,7 +94,7 @@ def get_secret_by_name(host_project, secret_name, **kwargs):
     return get_secret_by_uri(secret_uri, **kwargs)
 
 
-def get_secret_by_uri(secret_uri, decode=True, credentials=None):
+def get_secret_by_uri(secret_uri, decode=True, credentials=None, timeout=None):
     """
     Gets a secret from GCP and returns it either as decoded
     utf-8 or raw bytes (depending on ``decode`` parameter).
@@ -121,13 +121,16 @@ def get_secret_by_uri(secret_uri, decode=True, credentials=None):
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
 
+    :type timeout: :py:class:`float` 
+    :param timeout: request timeout may be specified if desired.
+
     :rtype: :py:class:`bytes` OR :py:class:`str`
     :returns: the secret data.
     """
     _LOGGER.info(f"Getting secret: {secret_uri}")
     client = secretmanager.SecretManagerServiceClient(credentials=credentials)
     secret = client.access_secret_version(
-        request={"name": secret_uri}, timeout=3
+        request={"name": secret_uri}, timeout=timeout
     ).payload.data
     if decode:
         return secret.decode("utf-8")
