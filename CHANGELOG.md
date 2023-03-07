@@ -2,6 +2,9 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
+## [1.1.0](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.2...v1.1.0`) (2023-03-07)
+
+* Updated dependencies across the project (pre-commit, github actions, python deps).
 
 ## [1.0.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.0...v1.0.2`) (2022-07-08)
 
