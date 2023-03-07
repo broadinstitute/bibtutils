@@ -7,14 +7,15 @@ Functionality making use of GCP's Cloud Storage.
 See the official Cloud Storage Python Client documentation here: `link <https://googleapis.dev/python/storage/latest/index.html>`_.
 
 """
-
-from google.cloud import storage
-from google.api_core import exceptions as google_exceptions
 import datetime
-import logging
 import json
+import logging
+
+from google.api_core import exceptions as google_exceptions
+from google.cloud import storage
 
 _LOGGER = logging.getLogger(__name__)
+
 
 def create_bucket(project, bucket_name, credentials=None):
     """
@@ -30,7 +31,7 @@ def create_bucket(project, bucket_name, credentials=None):
         adhere to the GCS bucket naming guidelines:
         https://cloud.google.com/storage/docs/naming-buckets
 
-    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
 
@@ -79,8 +80,8 @@ def read_gcs(bucket_name, blob_name, decode=True, credentials=None):
     :type decode: :py:class:`bool`
     :param decode: (Optional) whether or not to decode the blob
         contents into utf-8. Defaults to ``True``.
-    
-    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
 
@@ -130,7 +131,7 @@ def write_gcs(
     mime_type="text/plain",
     create_bucket_if_not_found=False,
     timeout=storage.constants._DEFAULT_TIMEOUT,
-    credentials=None
+    credentials=None,
 ):
     """
     Writes a String to GCS storage under a given blob name to the given bucket.
@@ -154,8 +155,8 @@ def write_gcs(
     :type create_bucket_if_not_found: :py:class:`bool`
     :param create_bucket_if_not_found: (Optional) if ``True``, will attempt to
         create the bucket if it does not exist. Defaults to ``False``.
-    
-    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
 
@@ -180,13 +181,7 @@ def write_gcs(
     return
 
 
-def write_gcs_nldjson(
-    bucket_name,
-    blob_name,
-    json_data,
-    add_date=False,
-    **kwargs
-):
+def write_gcs_nldjson(bucket_name, blob_name, json_data, add_date=False, **kwargs):
     """
     Writes a dict to GCS storage under a given blob name to the given bucket.
     The executing account must have (at least) write permissions to the bucket.
@@ -229,12 +224,7 @@ def write_gcs_nldjson(
 
     """
     nld_json = _generate_json_nld(json_data, add_date)
-    write_gcs(
-        bucket_name,
-        blob_name,
-        nld_json,
-        **kwargs
-    )
+    write_gcs(bucket_name, blob_name, nld_json, **kwargs)
     return
 
 

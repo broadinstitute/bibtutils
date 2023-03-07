@@ -96,5 +96,3 @@ Getting Comfortable: Tutorials and Resources
    Reference <https://packaging.python.org/guides/distributing-packages-using-setuptools/>`__
 -  `GitHub Actions <https://github.com/features/actions>`__
 -  `bump2version <https://github.com/c4urself/bump2version>`__
-
-

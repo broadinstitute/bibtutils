@@ -7,18 +7,21 @@ Functionality making use of GCP's PubSubs.
 See the official PubSub Python Client documentation here: `link <https://googleapis.dev/python/pubsub/latest/index.html>`_.
 
 """
-
-from bibtutils.slack.error import send_cf_fail_alert
-from bibtutils.gcp.secrets import get_secret_by_uri
-from google.cloud import pubsub_v1
-import os
+import base64
 import json
 import logging
-import base64
+import os
+from datetime import datetime
+from datetime import timezone
+
 from dateutil.parser import parse
-from datetime import datetime, timezone
+from google.cloud import pubsub_v1
+
+from bibtutils.gcp.secrets import get_secret_by_uri
+from bibtutils.slack.error import send_cf_fail_alert
 
 _LOGGER = logging.getLogger(__name__)
+
 
 def send_pubsub(topic_uri, payload, credentials=None):
     """
@@ -46,8 +49,8 @@ def send_pubsub(topic_uri, payload, credentials=None):
     :type payload: :py:class:`dict` OR :py:class:`str`
     :param payload: the pubsub payload. can be either a ``dict`` or a ``str``.
         will be converted to bytes before sending.
-    
-    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
     """
@@ -62,7 +65,9 @@ def send_pubsub(topic_uri, payload, credentials=None):
     return
 
 
-def retrigger_self(payload, proj_envar="_GOOGLE_PROJECT", topic_envar="_TRIGGER_TOPIC", **kwargs):
+def retrigger_self(
+    payload, proj_envar="_GOOGLE_PROJECT", topic_envar="_TRIGGER_TOPIC", **kwargs
+):
     """
     Dispatches the next iteration of a PubSub-triggered Cloud Function.
     Any extra arguments (``kwargs``) are passed to the :func:`~bibtutils.gcp.pubsub.send_pubsub` function.

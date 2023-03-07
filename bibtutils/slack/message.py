@@ -5,14 +5,15 @@ bibtutils.slack.message
 Enables sending messages to Slack.
 
 """
-
-import os
+import datetime
 import json
 import logging
+import os
+
 import requests
-import datetime
 
 _LOGGER = logging.getLogger(__name__)
+
 
 def send_message(webhook, title, text, color):
     """Sends a message to Slack.

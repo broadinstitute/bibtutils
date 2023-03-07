@@ -5,10 +5,10 @@ bibtutils.slack.error
 Enables sending alerts (crashes and other errors) to Slack.
 
 """
-
-import os
-import logging
 import datetime
+import logging
+import os
+
 from bibtutils.slack.message import send_message
 
 _LOGGER = logging.getLogger(__name__)

@@ -7,12 +7,13 @@ Functionality making use of GCP's Secret Manager.
 See the official Secret Manager Python Client documentation here: `link <https://googleapis.dev/python/secretmanager/latest/index.html>`_.
 
 """
-
-from google.cloud import secretmanager
 import json
 import logging
 
+from google.cloud import secretmanager
+
 _LOGGER = logging.getLogger(__name__)
+
 
 def get_secret(host_project, secret_name, **kwargs):
     """
@@ -117,11 +118,11 @@ def get_secret_by_uri(secret_uri, decode=True, credentials=None, timeout=None):
     :param decode: (Optional) whether or not to decode the bytes.
         Defaults to ``True``.
 
-    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials` 
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making the API call, if not to
         use the account running the function for authentication.
 
-    :type timeout: :py:class:`float` 
+    :type timeout: :py:class:`float`
     :param timeout: request timeout may be specified if desired.
 
     :rtype: :py:class:`bytes` OR :py:class:`str`
