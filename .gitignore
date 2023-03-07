@@ -11,3 +11,4 @@ qualys
 test_gcp.py
 creds/**
 tests/config.py
+.python-version
