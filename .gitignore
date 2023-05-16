@@ -242,3 +242,7 @@ cython_debug/
 !*prod.yaml
 !**/.placeholder
 !docs/_build/**
+!**sa-key-rotator*
+!sa_key_rotate_list.py
+!requirements.txt
+!*.png
