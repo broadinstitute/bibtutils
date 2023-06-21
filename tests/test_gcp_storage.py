@@ -14,6 +14,16 @@ def test_storage_create_bucket():
 
     gcs.Client().get_bucket(bucket_name).delete()
 
+def test_storage_create_bucket_regional():
+    bucket_name = "bibtutils-test-temp-" + str(uuid4())
+    location = "us-east4"
+    storage.create_bucket(TEST_PROJECT, bucket_name, location=location)
+
+    # cleanup
+    from google.cloud import storage as gcs
+
+    gcs.Client().get_bucket(bucket_name).delete()
+
 
 def test_storage_plaintext():
     test_timestamp = int(time.time())
