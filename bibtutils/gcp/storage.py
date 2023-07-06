@@ -17,7 +17,7 @@ from google.cloud import storage
 _LOGGER = logging.getLogger(__name__)
 
 
-def create_bucket(project, bucket_name, credentials=None):
+def create_bucket(project, bucket_name, location="US", credentials=None):
     """
     Creates a Google Cloud Storage bucket in the specified project.
 
@@ -30,6 +30,13 @@ def create_bucket(project, bucket_name, credentials=None):
         bucket names must be **universally** unique in GCP, and need to
         adhere to the GCS bucket naming guidelines:
         https://cloud.google.com/storage/docs/naming-buckets
+
+    :type location: (Optional) :py:class:`str`
+    :param location: if specified, creates the dataset in the desired location/region.
+        The locations and regions supported are listed in
+        #locations_and_regions. if unspoecified
+        https://cloud.google.com/bigquery/docs/locations
+        defaults to US.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making the API call, if not to
@@ -44,14 +51,15 @@ def create_bucket(project, bucket_name, credentials=None):
     client = storage.Client(credentials=credentials)
     bucket = client.bucket(bucket_name)
     try:
-        bucket = client.create_bucket(bucket, project=project, location="us")
-    except google_exceptions.Forbidden as e:
-        _LOGGER.error(
-            "Current account does not have required permissions to create "
-            f"buckets in GCP project: [{project}]. Navigate to "
-            f"https://console.cloud.google.com/iam-admin/iam?project={project} "
-            'and add the "Storage Admin" role to the appropriate account.'
-        )
+        bucket = client.create_bucket(bucket, project=project, location=location)
+    except (google_exceptions.Forbidden,google_exceptions.Conflict, google_exceptions.BadRequest) as e:
+        if google_exceptions.Forbidden:
+            _LOGGER.error(
+                "Current account does not have required permissions to create "
+                f"buckets in GCP project: [{project}]. Navigate to "
+                f"https://console.cloud.google.com/iam-admin/iam?project={project} "
+                'and add the "Storage Admin" role to the appropriate account.'
+            )
         raise e
     _LOGGER.info(f"Bucket: [{bucket.name}] created successfully.")
     return bucket

@@ -11,9 +11,107 @@ import logging
 
 from google.api_core import exceptions as google_exceptions
 from google.cloud import bigquery
+import re
 
 _LOGGER = logging.getLogger(__name__)
 
+
+def create_dataset(bq_project, dataset_name, description=None, location="US", credentials=None, **kwargs):
+    """
+    Creates a dataset in BigQuery using the specified parameters.
+
+    Any extra args (``kwargs``) are passed to the
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_dataset` method.
+
+    :type bq_project: :py:class:`str`
+    :param bq_project: the project in which to find the dataset.
+
+    :type dataset_name: :py:class:`str`
+    :param dataset_name: the name of the dataset to be created.
+
+    :type description: (Optional) :py:class:`str`
+    :param description: the description for the datset. if unspecified defaults to None
+
+    :type location: (Optional) :py:class:`str`
+    :param location: if specified, creates the dataset in the desired location/region.
+        The locations and regions supported are listed in
+        #locations_and_regions. if unspoecified
+        https://cloud.google.com/bigquery/docs/locations
+        defaults to US.
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+
+    """
+    dataset_id = f"{bq_project}.{dataset_name}"
+    dataset = bigquery.Dataset(dataset_id)
+    dataset.location = location
+    dataset.description = description
+
+    _LOGGER.info(f"Attempting to create dataset: {dataset_id}")
+    _LOGGER.info("Sending dataset API request...")
+    try:
+        client = bigquery.Client(
+        project=bq_project, credentials=credentials)
+        dataset = client.create_dataset(dataset, timeout=30, **kwargs)
+        _LOGGER.info(f"Dataset created: {dataset_id}")
+    except (google_exceptions.NotFound,google_exceptions.GoogleAPICallError, google_exceptions.PermissionDenied) as e:
+        if google_exceptions.PermissionDenied:
+            _LOGGER.error(
+                "Current account does not have required permissions to create "
+                f"bigquery table in GCP project: [{bq_project}]. Navigate to "
+                f"https://console.cloud.google.com/iam-admin/iam?project={bq_project} "
+                'and add the "BigQuery User" role to the appropriate account.'
+            )
+        raise e
+    return
+
+def delete_dataset(bq_project, dataset_name, delete_contents=False, not_found_ok=False, credentials=None, **kwargs):
+    """
+    Creates a dataset in BigQuery using the specified parameters.
+
+    Any extra args (``kwargs``) are passed to the
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_dataset` method.
+
+    :type bq_project: :py:class:`str`
+    :param bq_project: the project in which to find the dataset.
+
+    :type dataset_name: :py:class:`str`
+    :param dataset_name: the name of the dataset to be created.
+
+    :type delete_contents: (Boolean) :py:class:`str`
+    :param delete_contents: The boolean that decides to delete the dataset. if unspecified defaults to False
+        where in the dataset is not deleted if it contains tables within.
+
+    :type not_found_ok: (Boolean) :py:class:`str`
+    :param not_found_ok: Boolean used to control errors if dataset is not found. if unspecified
+        defaults to False where in errors are not suppressed.
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
+    :param credentials: the credentials object to use when making the API call, if not to
+        use the account running the function for authentication.
+
+    """
+    dataset_id = f"{bq_project}.{dataset_name}"
+
+    _LOGGER.info(f"Attempting to delete dataset: {dataset_id}")
+    _LOGGER.info("Sending dataset API request...")
+    try:
+        client = bigquery.Client(
+        project=bq_project, credentials=credentials)
+        dataset = client.delete_dataset(dataset_id, delete_contents=delete_contents, not_found_ok=not_found_ok, **kwargs)
+        _LOGGER.info(f"Dataset deleted: {dataset_id}")
+    except (google_exceptions.NotFound,google_exceptions.GoogleAPICallError, google_exceptions.PermissionDenied) as e:
+        if google_exceptions.PermissionDenied:
+            _LOGGER.error(
+                "Current account does not have required permissions to create "
+                f"bigquery table in GCP project: [{bq_project}]. Navigate to "
+                f"https://console.cloud.google.com/iam-admin/iam?project={bq_project} "
+                'and add the "BigQuery User" role to the appropriate account.'
+            )
+        raise e
+    return
 
 def create_table(
     bq_project,

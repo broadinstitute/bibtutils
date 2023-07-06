@@ -1,6 +1,6 @@
 import os
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ["GCP_SANDBOX_BIBTUTILS_TEST"]
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = '/usr/creds/creds.json'
 TEST_PROJECT = "bits-bt-sandbox"
 TEST_SECRET = "bibtutils-test-secret"
 TEST_BUCKET = "bibtutils-test-bucket"

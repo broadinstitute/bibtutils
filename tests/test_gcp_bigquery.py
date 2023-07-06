@@ -6,6 +6,16 @@ from bibtutils.gcp import bigquery
 from bibtutils.gcp import storage
 
 
+def test_bigquery_create_dataset():
+    bigquery.create_dataset(
+        TEST_PROJECT,
+        TEST_DATASET
+    )
+
+    bigquery.delete_dataset(
+        f"{TEST_PROJECT}.{TEST_DATASET}"
+    )
+
 def test_bq_delete():
     bigquery.delete_table(
         TEST_PROJECT, TEST_DATASET, "test_delete_table", not_found_ok=True
