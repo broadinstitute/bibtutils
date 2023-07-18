@@ -2,7 +2,7 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
-## [1.2.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.1.1...v1.2.1`) (2023-07-18)
+## [1.2.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.1.1...v1.2.1) (2023-07-18)
 
 #### Features
 
@@ -18,17 +18,17 @@
 
 - Updated `create_bucket` functionality to include a location parameter.
 
-## [1.1.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.2...v1.1.1`) (2023-03-07)
+## [1.1.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.2...v1.1.1) (2023-03-07)
 
 - Updated dependencies across the project (pre-commit, github actions, python deps).
 
-## [1.0.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.0...v1.0.2`) (2022-07-08)
+## [1.0.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.0.0...v1.0.2) (2022-07-08)
 
 ### Features
 
 - [GCP] Fix BigQuery schema struct generation to deal properly with fields of type RECORD.
 
-## [1.0.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.1...v1.0.0`) (2022-07-02)
+## [1.0.0](https://www.github.com/broadinstitute/bibtutils/compare/v0.5.1...v1.0.0) (2022-07-02)
 
 ### Features
 
