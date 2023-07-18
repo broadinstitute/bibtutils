@@ -8,11 +8,9 @@ bibtutils: BITS Blue Team Utilities
 -  **Project Documentation**: https://bibtutils.readthedocs.io/en/latest/
 
 
-|build| |docs| |last_commit|
+|build| |docs| |last_commit| |status|
 
-|status| |pypi| |deps|
-
-|versions| |code_lines| |top_lang| |pypi_installs| 
+|pypi| |versions| |top_lang| |pypi_installs|
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bibtutils
    :target: https://pypi.org/project/bibtutils/
@@ -23,12 +21,9 @@ bibtutils: BITS Blue Team Utilities
 .. |docs| image:: https://img.shields.io/readthedocs/bibtutils
    :target: https://bibtutils.readthedocs.io/
 
-.. |build| image:: https://img.shields.io/github/workflow/status/broadinstitute/bibtutils/publish%20package%20to%20pypi
+.. |build| image:: https://img.shields.io/github/actions/workflow/status/broadinstitute/bibtutils/publish-to-pypi.yaml?branch=main
 
 .. |last_commit| image:: https://img.shields.io/github/last-commit/broadinstitute/bibtutils
-   :target: https://github.com/broadinstitute/bibtutils
-
-.. |code_lines| image:: https://img.shields.io/tokei/lines/github/broadinstitute/bibtutils
    :target: https://github.com/broadinstitute/bibtutils
 
 .. |pypi_installs| image:: https://img.shields.io/pypi/dm/bibtutils?label=pypi%20installs
@@ -36,10 +31,8 @@ bibtutils: BITS Blue Team Utilities
 
 .. |top_lang| image:: https://img.shields.io/github/languages/top/broadinstitute/bibtutils
 
-.. |status| image:: https://img.shields.io/badge/status-pre--alpha-red
+.. |status| image:: https://img.shields.io/badge/status-GA-green
 
-.. |deps| image:: https://requires.io/github/broadinstitute/bibtutils/requirements.svg?branch=main
-     :target: https://requires.io/github/broadinstitute/bibtutils/requirements/?branch=main
 
 Installing
 ----------

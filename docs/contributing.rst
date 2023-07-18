@@ -1,34 +1,6 @@
 Contributor's Guide
 ===================
 
-Testing new code
-----------------
-
--  Ensure you have Docker installed and running on your system.
--  Make any necessary changes to ``./tests/config.py``
--  In the root folder for bibtutils, run the command:
-
-.. code:: bash
-
-   $ docker build -f ./Dockerfile -t bibtutils-test . && docker run bibtutils-test
-
--  This will build a container and install whatever code you have in 
-   ``bibtutils/`` as the bibtutils library before running any tests in ``tests/``
-   using ``pytest``.
-
--  Note that you will need a service account credentials file with the requisite 
-   permissions on all resources used for tests. This file should be located at: 
-   ``./creds/service_account.json``
-
--  The account will need at least the following roles in the specified GCP project
-   in order to attempt all tests:
-   -  ``Storage Admin``
-   -  ``BigQuery Job User``
-   -  And the following roles on the below resources (values specified in ``./tests/config.py``):
-      -  ``Storage Admin`` on ``TEST_BUCKET``
-      -  ``BigQuery Admin`` on ``TEST_DATASET``
-      -  ``Publisher`` on ``TEST_PUBSUB``
-      -  ``Secret Version Accessor`` on ``TEST_SECRET``
 
 Updating and publishing a new package
 -------------------------------------
