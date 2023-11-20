@@ -5,7 +5,6 @@ bibtutils.slack.error
 Enables sending alerts (crashes and other errors) to Slack.
 
 """
-import datetime
 import logging
 import os
 

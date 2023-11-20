@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 SLACK_MAX_TEXT_LENGTH = 3000 - 35
 
 
-def send_message(webhook, title, text=None, color=None, blocks=None):
+def send_message(webhook, title, text=None, color=None, blocks=None, dividers=False):
     """Sends a message to Slack.
 
     .. code:: python
@@ -33,6 +33,13 @@ def send_message(webhook, title, text=None, color=None, blocks=None):
     :type text: :py:class:`str`
     :param text: the text to be included in the attachment.
         Can be Slack-compatible markdown.
+
+    :type blocks: :py:class:`list`
+    :param blocks: A list of strings, each to be put in its own attachment block.
+
+    :type dividers: :py:class:`bool`
+    :param dividers: When generating multiple blocks, whether or not to
+        include dividers between them.
 
     :type color: :py:class:`str`
     :param color: the color to use for the Slack attachment border.
@@ -69,6 +76,9 @@ def send_message(webhook, title, text=None, color=None, blocks=None):
             msg["attachments"][0]["blocks"].append(
                 {"type": "section", "text": {"type": "mrkdwn", "text": block}}
             )
+            if dividers:
+                msg["attachments"][0]["blocks"].append({"type": "divider"})
+
     else:
         raise Exception("Either text or blocks must be passed.")
     r = requests.post(webhook, json=msg)
