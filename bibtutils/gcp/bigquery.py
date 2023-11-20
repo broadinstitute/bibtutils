@@ -4,24 +4,31 @@ bibtutils.gcp.bigquery
 
 Functionality making use of GCP's BigQuery.
 
-See the official BigQuery Python Client documentation here: `link <https://googleapis.dev/python/bigquery/latest/index.html>`_.
+See the official BigQuery Python Client documentation here:
+`link <https://googleapis.dev/python/bigquery/latest/index.html>`_.
 
 """
 import logging
 
 from google.api_core import exceptions as google_exceptions
 from google.cloud import bigquery
-import re
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def create_dataset(bq_project, dataset_name, description=None, location="US", credentials=None, **kwargs):
+def create_dataset(
+    bq_project,
+    dataset_name,
+    description=None,
+    location="US",
+    credentials=None,
+    **kwargs,
+):
     """
     Creates a dataset in BigQuery using the specified parameters.
 
-    Any extra args (``kwargs``) are passed to the
-        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_dataset` method.
+    Any extra args (``kwargs``) are passed to
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_dataset`.
 
     :type bq_project: :py:class:`str`
     :param bq_project: the project in which to find the dataset.
@@ -40,8 +47,8 @@ def create_dataset(bq_project, dataset_name, description=None, location="US", cr
         defaults to US.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if not
+        to use the account running the function for authentication.
 
     """
     dataset_id = f"{bq_project}.{dataset_name}"
@@ -52,11 +59,14 @@ def create_dataset(bq_project, dataset_name, description=None, location="US", cr
     _LOGGER.info(f"Attempting to create dataset: {dataset_id}")
     _LOGGER.info("Sending dataset API request...")
     try:
-        client = bigquery.Client(
-        project=bq_project, credentials=credentials)
+        client = bigquery.Client(project=bq_project, credentials=credentials)
         dataset = client.create_dataset(dataset, timeout=30, **kwargs)
         _LOGGER.info(f"Dataset created: {dataset_id}")
-    except (google_exceptions.NotFound,google_exceptions.GoogleAPICallError, google_exceptions.PermissionDenied) as e:
+    except (
+        google_exceptions.NotFound,
+        google_exceptions.GoogleAPICallError,
+        google_exceptions.PermissionDenied,
+    ) as e:
         if google_exceptions.PermissionDenied:
             _LOGGER.error(
                 "Current account does not have required permissions to create "
@@ -67,12 +77,20 @@ def create_dataset(bq_project, dataset_name, description=None, location="US", cr
         raise e
     return
 
-def delete_dataset(bq_project, dataset_name, delete_contents=False, not_found_ok=False, credentials=None, **kwargs):
+
+def delete_dataset(
+    bq_project,
+    dataset_name,
+    delete_contents=False,
+    not_found_ok=False,
+    credentials=None,
+    **kwargs,
+):
     """
     Creates a dataset in BigQuery using the specified parameters.
 
-    Any extra args (``kwargs``) are passed to the
-        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_dataset` method.
+    Any extra args (``kwargs``) are passed to
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.create_dataset`.
 
     :type bq_project: :py:class:`str`
     :param bq_project: the project in which to find the dataset.
@@ -81,16 +99,17 @@ def delete_dataset(bq_project, dataset_name, delete_contents=False, not_found_ok
     :param dataset_name: the name of the dataset to be created.
 
     :type delete_contents: (Boolean) :py:class:`str`
-    :param delete_contents: The boolean that decides to delete the dataset. if unspecified defaults to False
-        where in the dataset is not deleted if it contains tables within.
+    :param delete_contents: The boolean that decides to delete the dataset.
+        if unspecified defaults to False where in the dataset is not deleted
+        if it contains tables within.
 
     :type not_found_ok: (Boolean) :py:class:`str`
-    :param not_found_ok: Boolean used to control errors if dataset is not found. if unspecified
-        defaults to False where in errors are not suppressed.
+    :param not_found_ok: Boolean used to control errors if dataset is not found.
+        if unspecified defaults to False where in errors are not suppressed.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
 
     """
     dataset_id = f"{bq_project}.{dataset_name}"
@@ -98,11 +117,19 @@ def delete_dataset(bq_project, dataset_name, delete_contents=False, not_found_ok
     _LOGGER.info(f"Attempting to delete dataset: {dataset_id}")
     _LOGGER.info("Sending dataset API request...")
     try:
-        client = bigquery.Client(
-        project=bq_project, credentials=credentials)
-        dataset = client.delete_dataset(dataset_id, delete_contents=delete_contents, not_found_ok=not_found_ok, **kwargs)
+        client = bigquery.Client(project=bq_project, credentials=credentials)
+        client.delete_dataset(
+            dataset_id,
+            delete_contents=delete_contents,
+            not_found_ok=not_found_ok,
+            **kwargs,
+        )
         _LOGGER.info(f"Dataset deleted: {dataset_id}")
-    except (google_exceptions.NotFound,google_exceptions.GoogleAPICallError, google_exceptions.PermissionDenied) as e:
+    except (
+        google_exceptions.NotFound,
+        google_exceptions.GoogleAPICallError,
+        google_exceptions.PermissionDenied,
+    ) as e:
         if google_exceptions.PermissionDenied:
             _LOGGER.error(
                 "Current account does not have required permissions to create "
@@ -112,6 +139,7 @@ def delete_dataset(bq_project, dataset_name, delete_contents=False, not_found_ok
             )
         raise e
     return
+
 
 def create_table(
     bq_project,
@@ -161,8 +189,8 @@ def create_table(
         Defaults to ``None``.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
     """
     table_id = f"{bq_project}.{dataset}.{table}"
     _LOGGER.info(f"Attempting to create table: {table_id}")
@@ -214,8 +242,8 @@ def delete_table(bq_project, dataset, table, credentials=None, **kwargs):
     :param table: the bq table to delete.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
     """
     table_id = f"{bq_project}.{dataset}.{table}"
     _LOGGER.info(f"Attempting to delete table: {table_id}")
@@ -239,14 +267,14 @@ def _get_schema(bq_project, dataset, table):
     :param table: the bq table to fetch the schema for.
     """
     client = bigquery.Client(project=bq_project)
-    table = bigquery.Table(f"{bq_project}.{dataset}.{table}")
+    table = client.get_table(f"{bq_project}.{dataset}.{table}")
     return table.schema
 
 
 def _generate_schema(bucket_name, blob_name, bq_project, dataset, credentials=None):
     """
-    Helper method to get an auto-generated schema based on input data in a bucket. Note that
-    this will create and delete a temporary table in order to generate the schema.
+    Helper method to get an auto-generated schema based on input data in a bucket. Note
+    that this will create and delete a temporary table in order to generate the schema.
 
     :type bucket_name: :py:class:`str`
     :param bucket_name: the location of the input data to generate a schema for.
@@ -261,8 +289,8 @@ def _generate_schema(bucket_name, blob_name, bq_project, dataset, credentials=No
     :param dataset: the bq dataset in which to make the temporary table.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
     """
     create_and_upload(
         bucket_name,
@@ -319,9 +347,9 @@ def _generate_schema_struct(schema_json):
     return schema_structs
 
 
-def _run_bq_job(job):
+def _monitor_job(job):
     """
-    Helper method to run a BQ job and catch/print any errors.
+    Helper method to monitor a BQ job and catch/print any errors.
 
     :type job: :py:class:`bq_storage:google.cloud.bigquery.job.*`
     :param job: the BigQuery job to run.
@@ -347,6 +375,7 @@ def upload_gcs_json(
     autodetect_schema=False,
     schema_json=None,
     credentials=None,
+    await_result=True,
     **kwargs,
 ):
     """
@@ -360,8 +389,8 @@ def upload_gcs_json(
     Use :func:`~bibtutils.gcp.storage.write_gcs_nldjson` to get a properly
     formatted blob from JSON objects.
 
-    Any extra args (``kwargs``) are passed to the
-        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.load_table_from_uri` method.
+    Any extra args (``kwargs``) are passed to
+        :py:func:`gcp_bigquery:google.cloud.bigquery.client.Client.load_table_from_uri`.
 
     .. code:: python
 
@@ -399,7 +428,8 @@ def upload_gcs_json(
 
     :type autodetect_schema: :py:class:`bool`
     :param autodetect_schema: (Optional) if true, will instruct BQ to
-        automatically detect the schema of the data being uploaded. Defaults to ``False``.
+        automatically detect the schema of the data being uploaded.
+        Defaults to ``False``.
 
     :type schema_json: :py:class:`dict`
     :param schema_json: (Optional) the schema for the new table. Defaults
@@ -408,11 +438,13 @@ def upload_gcs_json(
         ``bq show --format=prettyjson project:dataset.table | jq '.schema.fields'``
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
-    """
-    # TODO: allow schema update options? https://googleapis.dev/python/bigquery/latest/generated/google.cloud.bigquery.job.SchemaUpdateOption.html#google.cloud.bigquery.job.SchemaUpdateOption
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
 
+    :type await_result: :py:class:`bool`
+    :param await_result: Whether or not to hang and await the job result or
+        simply return None once the job is submitted.
+    """
     source_uri = f"gs://{bucket_name}/{blob_name}"
     table_ref = f"{bq_project}.{dataset}.{table}"
     schema_struct = None
@@ -445,9 +477,10 @@ def upload_gcs_json(
         **kwargs,
     )
 
-    _run_bq_job(load_job)
+    if await_result:
+        _monitor_job(load_job)
+        _LOGGER.info(f"Upload of {source_uri} to BQ complete.")
 
-    _LOGGER.info(f"Upload of {source_uri} to BQ complete.")
     return
 
 
@@ -466,6 +499,7 @@ def create_and_upload(
     time_partitioning_field=None,
     already_created_ok=False,
     credentials=None,
+    await_result=True,
 ):
     """
     Combines the functionality of :func:`~bibtutils.gcp.bigquery.create_table`
@@ -529,8 +563,12 @@ def create_and_upload(
         if the table already exists. Defaults to ``False`` (will fail if table exists).
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
+
+    :type await_result: :py:class:`bool`
+    :param await_result: Whether or not to hang and await the job result or
+        simply return None once the job is submitted.
     """
     _LOGGER.info("Starting create_and_upload...")
     if not schema_json and not autodetect_schema and not generate_schema:
@@ -570,13 +608,14 @@ def create_and_upload(
         autodetect_schema=autodetect_schema,
         schema_json=schema_json,
         credentials=credentials,
+        await_result=await_result,
     )
 
     _LOGGER.info("create_and_upload completed successfully.")
     return
 
 
-def query(query, query_project=None, credentials=None):
+def query(query, query_project=None, credentials=None, await_result=True):
     """
     Sends the user-supplied query to BQ and returns the result
     as a list of dicts. The account running the query must have
@@ -601,8 +640,12 @@ def query(query, query_project=None, credentials=None):
         If not specified, defaults to the environment's credential's project.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-    :param credentials: the credentials object to use when making the API call, if not to
-        use the account running the function for authentication.
+    :param credentials: the credentials object to use when making the API call, if
+        not to use the account running the function for authentication.
+
+    :type await_result: :py:class:`bool`
+    :param await_result: Whether or not to hang and await the job result or
+        simply return None once the job is submitted.
 
     :rtype: :py:class:`list`
     :returns: a list of dicts, one row in the result table per dict.
@@ -611,6 +654,9 @@ def query(query, query_project=None, credentials=None):
     bq_client = bigquery.Client(project=query_project, credentials=credentials)
     _LOGGER.info("Querying BQ...")
     query_job = bq_client.query(query)
+    if not await_result:
+        _LOGGER.debug("Not waiting for result of query, returning None.")
+        return None
     results = query_job.result()
     _LOGGER.info("Iterating over result rows...")
     results_json = []
