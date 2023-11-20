@@ -2,12 +2,16 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
-## [1.3.0](https://www.github.com/broadinstitute/bibtutils/compare/v1.2.1...v1.3.0) (2023-11-20)
+## [1.3.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.2.1...v1.3.0) (2023-11-20)
 
 #### BigQuery
 
 - Added `await_result` argument to the `query` and `upload_gcs_json` functions. This defaults
   to `True` to avoid any breaking changes.
+
+#### Slack
+
+- Added `blocks` functionality for `slack.message()`, supporting multi-block attachments.
 
 ## [1.2.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.1.1...v1.2.1) (2023-07-18)
 

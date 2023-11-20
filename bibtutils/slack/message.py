@@ -5,17 +5,16 @@ bibtutils.slack.message
 Enables sending messages to Slack.
 
 """
-import datetime
-import json
 import logging
-import os
 
 import requests
 
 _LOGGER = logging.getLogger(__name__)
 
+SLACK_MAX_TEXT_LENGTH = 3000 - 35
 
-def send_message(webhook, title, text, color):
+
+def send_message(webhook, title, text=None, color=None, blocks=None):
     """Sends a message to Slack.
 
     .. code:: python
@@ -38,17 +37,40 @@ def send_message(webhook, title, text, color):
     :type color: :py:class:`str`
     :param color: the color to use for the Slack attachment border.
     """
-    msg = {
-        "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": title}}],
-        "attachments": [
-            {
-                "color": color,
-                "blocks": [
-                    {"type": "section", "text": {"type": "mrkdwn", "text": text}}
-                ],
-            }
-        ],
-    }
+    if not color:
+        color = "#000000"
+    if text:
+        if len(text) > SLACK_MAX_TEXT_LENGTH:
+            text = text[:SLACK_MAX_TEXT_LENGTH] + "\n..."
+        msg = {
+            "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": title}}],
+            "attachments": [
+                {
+                    "color": color,
+                    "blocks": [
+                        {"type": "section", "text": {"type": "mrkdwn", "text": text}}
+                    ],
+                }
+            ],
+        }
+    elif blocks:
+        msg = {
+            "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": title}}],
+            "attachments": [
+                {
+                    "color": color,
+                    "blocks": [],
+                }
+            ],
+        }
+        for block in blocks:
+            if len(block) > SLACK_MAX_TEXT_LENGTH:
+                block = block[:SLACK_MAX_TEXT_LENGTH] + "\n..."
+            msg["attachments"][0]["blocks"].append(
+                {"type": "section", "text": {"type": "mrkdwn", "text": block}}
+            )
+    else:
+        raise Exception("Either text or blocks must be passed.")
     r = requests.post(webhook, json=msg)
     r.raise_for_status()
     return
