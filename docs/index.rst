@@ -8,30 +8,27 @@ bibtutils: BITS Blue Team Utilities
 -  **Project Documentation**: https://bibtutils.readthedocs.io/en/latest/
 
 
-|build| |docs| |last_commit|
+|docs| |last_commit|
 
 |status| |pypi| |top_lang|
 
 |versions| |pypi_installs|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bibt-slack
-   :target: https://pypi.org/project/bibt-slack/
+.. |versions| image:: https://img.shields.io/pypi/pyversions/bibtutils
+   :target: https://pypi.org/project/bibtutils/
 
-.. |versions| image:: https://img.shields.io/pypi/pyversions/bibt-slack
-   :target: https://pypi.org/project/bibt-slack/
+.. |docs| image:: https://img.shields.io/readthedocs/bibtutils
+   :target: https://bibtutils.readthedocs.io/
 
-.. |docs| image:: https://img.shields.io/readthedocs/bibt-slack
-   :target: https://bibt-slack.readthedocs.io/
+.. |build| image:: https://img.shields.io/github/workflow/status/broadinstitute/bibtutils/publish%20to%20pypi
 
-.. |build| image:: https://img.shields.io/github/workflow/status/broadinstitute/bibt-slack/publish%20to%20pypi
+.. |last_commit| image:: https://img.shields.io/github/last-commit/broadinstitute/bibtutils
+   :target: https://github.com/broadinstitute/bibtutils
 
-.. |last_commit| image:: https://img.shields.io/github/last-commit/broadinstitute/bibt-slack
-   :target: https://github.com/broadinstitute/bibt-slack
+.. |pypi_installs| image:: https://img.shields.io/pypi/dm/bibtutils?label=pypi%20installs
+   :target: https://pypi.org/project/bibtutils/
 
-.. |pypi_installs| image:: https://img.shields.io/pypi/dm/bibt-slack?label=pypi%20installs
-   :target: https://pypi.org/project/bibt-slack/
-
-.. |top_lang| image:: https://img.shields.io/github/languages/top/broadinstitute/bibt-slack
+.. |top_lang| image:: https://img.shields.io/github/languages/top/broadinstitute/bibtutils
 
 .. |status| image:: https://img.shields.io/badge/status-beta-orange
 
