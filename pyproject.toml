@@ -1,6 +1,45 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = [
-  "setuptools>=42",
-  "wheel",
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+authors = [{name = "Matthew OBrien", email = "mobrien@broadinstitute.org"}]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Security",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Utilities",
 ]
+dependencies = [
+  "requests",
+  "python-dateutil",
+  "google-api-core",
+  "google-api-python-client",
+  "google-auth",
+  "google-cloud-iam",
+  "google-cloud-core",
+  "google-cloud-storage",
+  "google-cloud-bigquery",
+  "google-cloud-pubsub",
+  "google-cloud-secret-manager",
+  "google-cloud-securitycenter",
+  "googleapis-common-protos",
+  "protobuf",
+]
+description = "Functionality often used by BITS Blue Team."
+name = "bibtutils"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.7"
+version = "1.3.3"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/broadinstitute/bibtutils/issues"
+"Documentation" = "https://bibtutils.readthedocs.io/en/latest/"
+"Homepage" = "https://github.com/broadinstitute/bibtutils"

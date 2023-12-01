@@ -5,8 +5,15 @@
 # Required
 version: 2
 
+python:
+  install:
+    - requirements: requirements.txt
+    - requirements: docs/requirements.txt
+
 # Optionally build your docs in additional formats such as PDF
-formats: all
+formats:
+  - htmlzip
+  - pdf
 
 build:
   os: ubuntu-22.04

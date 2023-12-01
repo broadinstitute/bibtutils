@@ -10,6 +10,8 @@
 import os
 import sys
 
+from bibtutils import __version__
+
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("."))
 
@@ -19,7 +21,8 @@ sys.path.insert(0, os.path.abspath("."))
 project = "bibtutils"
 copyright = "2021, Matthew OBrien"
 author = "Matthew OBrien"
-
+version = __version__
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 

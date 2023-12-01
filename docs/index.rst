@@ -8,31 +8,32 @@ bibtutils: BITS Blue Team Utilities
 -  **Project Documentation**: https://bibtutils.readthedocs.io/en/latest/
 
 
-|build| |docs| |last_commit| |status|
+|build| |docs| |last_commit|
 
-|pypi| |versions| |top_lang| |pypi_installs|
+|status| |pypi| |top_lang|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bibtutils
-   :target: https://pypi.org/project/bibtutils/
+|versions| |pypi_installs|
 
-.. |versions| image:: https://img.shields.io/pypi/pyversions/bibtutils
-   :target: https://pypi.org/project/bibtutils/
+.. |pypi| image:: https://img.shields.io/pypi/v/bibt-slack
+   :target: https://pypi.org/project/bibt-slack/
 
-.. |docs| image:: https://img.shields.io/readthedocs/bibtutils
-   :target: https://bibtutils.readthedocs.io/
+.. |versions| image:: https://img.shields.io/pypi/pyversions/bibt-slack
+   :target: https://pypi.org/project/bibt-slack/
 
-.. |build| image:: https://img.shields.io/github/actions/workflow/status/broadinstitute/bibtutils/publish-to-pypi.yaml?branch=main
+.. |docs| image:: https://img.shields.io/readthedocs/bibt-slack
+   :target: https://bibt-slack.readthedocs.io/
 
-.. |last_commit| image:: https://img.shields.io/github/last-commit/broadinstitute/bibtutils
-   :target: https://github.com/broadinstitute/bibtutils
+.. |build| image:: https://img.shields.io/github/workflow/status/broadinstitute/bibt-slack/publish%20to%20pypi
 
-.. |pypi_installs| image:: https://img.shields.io/pypi/dm/bibtutils?label=pypi%20installs
-   :target: https://pypi.org/project/bibtutils/
+.. |last_commit| image:: https://img.shields.io/github/last-commit/broadinstitute/bibt-slack
+   :target: https://github.com/broadinstitute/bibt-slack
 
-.. |top_lang| image:: https://img.shields.io/github/languages/top/broadinstitute/bibtutils
+.. |pypi_installs| image:: https://img.shields.io/pypi/dm/bibt-slack?label=pypi%20installs
+   :target: https://pypi.org/project/bibt-slack/
 
-.. |status| image:: https://img.shields.io/badge/status-GA-green
+.. |top_lang| image:: https://img.shields.io/github/languages/top/broadinstitute/bibt-slack
 
+.. |status| image:: https://img.shields.io/badge/status-beta-orange
 
 Installing
 ----------
