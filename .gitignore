@@ -233,6 +233,7 @@ cython_debug/
 
 # Exceptions
 !.terraform.lock.hcl
+!requirements*.txt
 !terraform*/schema/**/*.json
 !.pre-commit-config.yaml
 !schema.json
@@ -245,4 +246,6 @@ cython_debug/
 !**sa-key-rotator*
 !sa_key_rotate_list.py
 !requirements.txt
+!requirements-dev.txt
 !*.png
+#.idea/
