@@ -1,16 +1,13 @@
 2023-12-11: THIS LIBRARY IS DEPRECATED. PLEASE USE THE FOLLOWING LIBRARIES INSTEAD.
 ===================================================================================
 
-- `bibt-gcp-asset <https://github.com/broadinstitute/bibt-gcp-asset>`_
 - `bibt-gcp-bq <https://github.com/broadinstitute/bibt-gcp-bq>`_
 - `bibt-gcp-iam <https://github.com/broadinstitute/bibt-gcp-iam>`_
 - `bibt-gcp-pubsub <https://github.com/broadinstitute/bibt-gcp-pubsub>`_
-- `bibt-gcp-scc <https://github.com/broadinstitute/bibt-gcp-scc>`_
 - `bibt-gcp-secrets <https://github.com/broadinstitute/bibt-gcp-secrets>`_
 - `bibt-gcp-storage <https://github.com/broadinstitute/bibt-gcp-storage>`_
-- `bibt-qualys <https://github.com/broadinstitute/bibt-qualys>`_
-- `bibt-sentinelone <https://github.com/broadinstitute/bibt-sentinelone>`_
 - `bibt-slack <https://github.com/broadinstitute/bibt-slack>`_
+- `Complete list of libraries <https://broadinstitute.github.io/bibt-libraries/>`_
 
 bibtutils: BITS Blue Team Utilities
 ===================================

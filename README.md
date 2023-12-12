@@ -1,15 +1,12 @@
 # 2023-12-11: THIS LIBRARY IS DEPRECATED. PLEASE USE THE FOLLOWING LIBRARIES INSTEAD.
 
-- [bibt-gcp-asset](https://github.com/broadinstitute/bibt-gcp-asset)
 - [bibt-gcp-bq](https://github.com/broadinstitute/bibt-gcp-bq)
 - [bibt-gcp-iam](https://github.com/broadinstitute/bibt-gcp-iam)
 - [bibt-gcp-pubsub](https://github.com/broadinstitute/bibt-gcp-pubsub)
-- [bibt-gcp-scc](https://github.com/broadinstitute/bibt-gcp-scc)
 - [bibt-gcp-secrets](https://github.com/broadinstitute/bibt-gcp-secrets)
 - [bibt-gcp-storage](https://github.com/broadinstitute/bibt-gcp-storage)
-- [bibt-qualys](https://github.com/broadinstitute/bibt-qualys)
-- [bibt-sentinelone](https://github.com/broadinstitute/bibt-sentinelone)
 - [bibt-slack](https://github.com/broadinstitute/bibt-slack)
+- [Complete list of libraries](https://broadinstitute.github.io/bibt-libraries/)
 
 ---
 

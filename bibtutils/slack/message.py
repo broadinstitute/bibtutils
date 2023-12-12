@@ -6,9 +6,15 @@ Enables sending messages to Slack.
 
 """
 import logging
+from warnings import warn
 
 import requests
 
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 _LOGGER = logging.getLogger(__name__)
 
 SLACK_MAX_TEXT_LENGTH = 3000 - 35

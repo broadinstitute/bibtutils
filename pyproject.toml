@@ -36,7 +36,7 @@ dependencies = [
   "googleapis-common-protos",
   "protobuf",
 ]
-description = "Functionality often used by BITS Blue Team."
+description = "Functionality often used by BITS Blue Team. [DEPRECATED]"
 name = "bibtutils"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.7"

@@ -9,9 +9,15 @@ See the official Secret Manager Python Client documentation here: `link <https:/
 """
 import json
 import logging
+from warnings import warn
 
 from google.cloud import secretmanager
 
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 _LOGGER = logging.getLogger(__name__)
 
 

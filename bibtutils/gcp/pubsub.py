@@ -13,6 +13,7 @@ import logging
 import os
 from datetime import datetime
 from datetime import timezone
+from warnings import warn
 
 from dateutil.parser import parse
 from google.cloud import pubsub_v1
@@ -20,6 +21,11 @@ from google.cloud import pubsub_v1
 from bibtutils.gcp.secrets import get_secret_by_uri
 from bibtutils.slack.error import send_cf_fail_alert
 
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 _LOGGER = logging.getLogger(__name__)
 
 

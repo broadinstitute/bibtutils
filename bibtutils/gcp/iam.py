@@ -1,9 +1,15 @@
 import logging
+from warnings import warn
 
 from google.api_core import exceptions as google_exceptions
 from google.cloud import iam_credentials
 from google.oauth2 import credentials
 
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -10,10 +10,16 @@ See the official Cloud Storage Python Client documentation here: `link <https://
 import datetime
 import json
 import logging
+from warnings import warn
 
 from google.api_core import exceptions as google_exceptions
 from google.cloud import storage
 
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -52,7 +58,11 @@ def create_bucket(project, bucket_name, location="US", credentials=None):
     bucket = client.bucket(bucket_name)
     try:
         bucket = client.create_bucket(bucket, project=project, location=location)
-    except (google_exceptions.Forbidden,google_exceptions.Conflict, google_exceptions.BadRequest) as e:
+    except (
+        google_exceptions.Forbidden,
+        google_exceptions.Conflict,
+        google_exceptions.BadRequest,
+    ) as e:
         if google_exceptions.Forbidden:
             _LOGGER.error(
                 "Current account does not have required permissions to create "

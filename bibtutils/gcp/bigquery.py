@@ -9,9 +9,16 @@ See the official BigQuery Python Client documentation here:
 
 """
 import logging
+from warnings import warn
 
 from google.api_core import exceptions as google_exceptions
 from google.cloud import bigquery
+
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -7,9 +7,15 @@ Enables sending alerts (crashes and other errors) to Slack.
 """
 import logging
 import os
+from warnings import warn
 
 from bibtutils.slack.message import send_message
 
+warn(
+    "This library is deprecated. Please use a supported library: "
+    "https://broadinstitute.github.io/bibt-libraries/",
+    DeprecationWarning,
+)
 _LOGGER = logging.getLogger(__name__)
 
 
