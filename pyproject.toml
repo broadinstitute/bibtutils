@@ -3,7 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["bibt"]
+packages = ["bibtutils"]
 
 [project]
 authors = [{name = "Matthew OBrien", email = "mobrien@broadinstitute.org"}]
@@ -21,20 +21,21 @@ classifiers = [
   "Topic :: Utilities",
 ]
 dependencies = [
-  "requests",
-  "python-dateutil",
-  "google-api-core",
-  "google-api-python-client",
-  "google-auth",
-  "google-cloud-iam",
-  "google-cloud-core",
-  "google-cloud-storage",
-  "google-cloud-bigquery",
-  "google-cloud-pubsub",
-  "google-cloud-secret-manager",
-  "google-cloud-securitycenter",
-  "googleapis-common-protos",
-  "protobuf",
+  "google-api-python-client==2.110.0",
+  "google-api-core==2.15.0",
+  "google-auth==2.25.2",
+  "google-cloud-bigquery==3.13.0",
+  "google-cloud-core==2.4.1",
+  "google-cloud-iam==2.13.0",
+  "google-cloud-pubsub==2.19.0",
+  "google-cloud-secret-manager==2.17.0",
+  "google-cloud-securitycenter==1.25.0",
+  "google-cloud-storage==2.13.0",
+  "googleapis-common-protos==1.62.0",
+  "python-dateutil==2.8.2",
+  "PyYAML==6.0",
+  "requests==2.31.0",
+  "protobuf==4.25.1",
 ]
 description = "Functionality often used by BITS Blue Team. [DEPRECATED]"
 name = "bibtutils"

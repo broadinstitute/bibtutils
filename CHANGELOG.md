@@ -2,6 +2,12 @@
 
 [PyPI History](https://pypi.org/project/bibtutils/#history)
 
+## [2.0.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.3.0...v2.0.1)
+
+- **DEPRECATED LIBRARY**
+- Added deprecated warnings on import.
+- Pinned dependencies.
+
 ## [1.3.1](https://www.github.com/broadinstitute/bibtutils/compare/v1.2.1...v1.3.0) (2023-11-20)
 
 #### BigQuery
