@@ -41,7 +41,7 @@ description = "Functionality often used by BITS Blue Team. [DEPRECATED]"
 name = "bibtutils"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.7"
-version = "2.0.0"
+version = "2.0.1"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/broadinstitute/bibtutils/issues"
